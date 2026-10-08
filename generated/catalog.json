@@ -1,0 +1,2076 @@
+{
+  "schemaVersion": 1,
+  "skills": [
+    {
+      "aliasName": "matt-pocock-ask-matt",
+      "bucket": "engineering",
+      "canonicalId": "ask-matt",
+      "compatRules": {
+        "alias": [
+          "alias-name-ask-matt"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "code-review",
+          "evidence": [
+            {
+              "line": 30,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point."
+            },
+            {
+              "line": 34,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "4. **`/retro`** closes the loop. After a build, and especially one that went sideways, it looks back over the session and suggests changes to the agent's **environment**, not the code: navigation pointers, automated checks, the coding standards `/code-review` enforces, steering files, tooling. Mechanical mistakes become deterministic checks; judgement calls become coding standards. The next build then starts from a better environment."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "codebase-design",
+          "evidence": [
+            {
+              "line": 60,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/improve-codebase-architecture`** runs whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces **deepening opportunities**; picking one _generates an idea_ you can take into the main flow at `/grill-with-docs`. It's the survey that finds the candidates; **`/codebase-design`** (below) is the bench you design the chosen one on."
+            },
+            {
+              "line": 67,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/codebase-design`** is the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `/tdd` and `/improve-codebase-architecture` both speak it."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "diagnosing-bugs",
+          "evidence": [
+            {
+              "line": 50,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **Something's broken** → **`/diagnosing-bugs`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Once the fix is in, run **`/retro`** in the same session to ask what would have prevented the bug; where the real finding is that there's no good seam to lock it down, that's a job for **`/improve-codebase-architecture`**."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 66,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/domain-modeling`**: sharpen the project's *domain* language: challenge a fuzzy term, resolve an overloaded word (\"account\" doing three jobs), record a hard-to-reverse decision as an ADR. It's the active discipline `/grill-with-docs` drives to keep `GLOSSARY.md` a clean glossary."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "grill-me",
+          "evidence": [
+            {
+              "line": 19,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "1. **`/grill-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/grill-me` instead, covered under Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)"
+            },
+            {
+              "line": 85,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grill-me`**: the same relentless interview as `/grill-with-docs`, but **stateless**: it saves nothing locally and builds no `GLOSSARY.md`. Reach for it when you are **not working in a working directory** (sharpening a plan, a design, a piece of writing, anything with no repo under it). If you are in a working directory, use `/grill-with-docs` instead: it runs the same interview and leaves a paper trail, so it is strictly the better one."
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            },
+            {
+              "line": 89,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/grill-with-docs` or `/to-spec`."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "grill-with-docs",
+          "evidence": [
+            {
+              "line": 19,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "1. **`/grill-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/grill-me` instead, covered under Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)"
+            },
+            {
+              "line": 52,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **A huge, foggy effort: a greenfield project or a huge feature build, too big for one session** → **`/wayfinder`**, the most cognitively demanding flow here. When the way from here to the destination isn't visible yet, it charts a **shared map** of **decision tickets** on the issue tracker and resolves them one at a time, producing **decisions, not deliverables**, until the fog is pushed back and the way is clear. Where **`/grill-with-docs`** sharpens an idea you can hold in one session, wayfinder is for the idea you can't, and it's slower and denser, so save it for exactly that, never a well-scoped feature."
+            },
+            {
+              "line": 60,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/improve-codebase-architecture`** runs whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces **deepening opportunities**; picking one _generates an idea_ you can take into the main flow at `/grill-with-docs`. It's the survey that finds the candidates; **`/codebase-design`** (below) is the bench you design the chosen one on."
+            },
+            {
+              "line": 66,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/domain-modeling`**: sharpen the project's *domain* language: challenge a fuzzy term, resolve an overloaded word (\"account\" doing three jobs), record a hard-to-reverse decision as an ADR. It's the active discipline `/grill-with-docs` drives to keep `GLOSSARY.md` a clean glossary."
+            },
+            {
+              "line": 85,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grill-me`**: the same relentless interview as `/grill-with-docs`, but **stateless**: it saves nothing locally and builds no `GLOSSARY.md`. Reach for it when you are **not working in a working directory** (sharpening a plan, a design, a piece of writing, anything with no repo under it). If you are in a working directory, use `/grill-with-docs` instead: it runs the same interview and leaves a paper trail, so it is strictly the better one."
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            },
+            {
+              "line": 88,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/research`**: delegate reading legwork to a **background agent**: it investigates a question against **primary sources**, then leaves a cited Markdown file in the repo. Keep working while it reads. The file it produces is something to take *into* the main flow at `/grill-with-docs`, since research feeds the thinking rather than replacing it."
+            },
+            {
+              "line": 89,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/grill-with-docs` or `/to-spec`."
+            },
+            {
+              "line": 91,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/wait-what`** is the corrective for a message that didn't land. Use it mid-conversation, inside any other skill, and the agent re-pitches what it just said with the context you were missing, in plain English, using the `GLOSSARY.md` vocabulary. It works after the fact; `/grill-with-docs` is the upfront cure, because a shared language agreed early is what stops the jargon arriving at all."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 19,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "1. **`/grill-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. (No working directory? Use `/grill-me` instead, covered under Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)"
+            },
+            {
+              "line": 38,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket. Run `/retro` in the session it's looking back on, before you clear; after clearing, point it at that session's log instead."
+            },
+            {
+              "line": 71,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "A **phase** is a chunk of work inside a session: the grilling, the implementation, the QA. At the **boundary** between two of them you have five options, and picking between them is the fuzziest decision in this whole map:"
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            },
+            {
+              "line": 3,
+              "path": "skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+              "text": "A **phase** is a chunk of work inside a session: the grilling, the implementation, the QA. The definition is fuzzy on purpose: a phase ends when you think *\"ok, we're done with that\"*."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "handoff",
+          "evidence": [
+            {
+              "line": 20,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by **`/handoff`** in both directions (a prototype lives in its own directory, which is exactly what `/handoff` is for; see Phase boundaries):"
+            },
+            {
+              "line": 21,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **`/handoff`** out, then open a fresh session against that file,"
+            },
+            {
+              "line": 23,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **`/handoff`** back what you learned, and reference it from the original idea thread."
+            },
+            {
+              "line": 75,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/handoff`** writes a portable markdown file. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability."
+            },
+            {
+              "line": 13,
+              "path": "skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+              "text": "| **`/handoff`** | Write a portable markdown file and seed a session anywhere with it. |"
+            },
+            {
+              "line": 27,
+              "path": "skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+              "text": "**3. Do you need to hand off?** `/handoff` is narrow. You need it only when you are:"
+            },
+            {
+              "line": 34,
+              "path": "skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+              "text": "That list is the whole clause. What `/handoff` buys is **portability**: a file that travels. If nothing is travelling, you don't need it."
+            },
+            {
+              "line": 49,
+              "path": "skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+              "text": "| Secondary (`/compact`, `/handoff`) | Lossy       | Less  | Lots         |"
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "implement",
+          "evidence": [
+            {
+              "line": 26,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "     - **`/implement`** per ticket, **`/clear`ing context between each one**. On a local tracker that's one file per ticket under `.scratch/<feature>/issues/`, worked blockers-first by hand; on a real tracker the edges become native blocking links, so any ticket whose blockers are done can be grabbed. Each ticket is self-contained, so the last one's context is disposable."
+            },
+            {
+              "line": 28,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **No** → **`/implement`** right here, in the same context window."
+            },
+            {
+              "line": 30,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point."
+            },
+            {
+              "line": 38,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket. Run `/retro` in the session it's looking back on, before you clear; after clearing, point it at that session's log instead."
+            },
+            {
+              "line": 46,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **Bugs and requests piling up** → **`/triage`**. It moves issues through triage roles and produces agent-ready issues, which **`/implement`** later picks up."
+            },
+            {
+              "line": 54,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "  When the map clears, **it hands off, it doesn't build**: merge onto the main flow at **`/to-spec`**, which collapses the map's linked decisions into a buildable plan, then `/to-tickets` and `/implement` as usual. Looping the map straight into `/implement` skips that collapse and throws the linked detail away, so go straight to `/implement` only when the effort turned out genuinely small."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "implement-spec",
+          "evidence": [
+            {
+              "line": 27,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "     - **`/implement-spec`** for the whole spec in one run. It reads the tickets as a **task graph**, runs implementer subagents across the ready **frontier** in parallel, and lands everything on one **integration branch**. Reach for it when you'd rather orchestrate the build than drive each ticket yourself."
+            },
+            {
+              "line": 30,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "improve-codebase-architecture",
+          "evidence": [
+            {
+              "line": 50,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **Something's broken** → **`/diagnosing-bugs`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Once the fix is in, run **`/retro`** in the same session to ask what would have prevented the bug; where the real finding is that there's no good seam to lock it down, that's a job for **`/improve-codebase-architecture`**."
+            },
+            {
+              "line": 60,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/improve-codebase-architecture`** runs whenever you have a spare moment to keep the codebase good for agents to operate in. It surfaces **deepening opportunities**; picking one _generates an idea_ you can take into the main flow at `/grill-with-docs`. It's the survey that finds the candidates; **`/codebase-design`** (below) is the bench you design the chosen one on."
+            },
+            {
+              "line": 67,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/codebase-design`** is the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `/tdd` and `/improve-codebase-architecture` both speak it."
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "pr",
+          "evidence": [
+            {
+              "line": 32,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   When the work goes up as a pull request, **`/pr`** shapes the body: the smallest visual that shows the change, before/after evidence that it works, and a one-way or two-way door call. It's model-invoked, so the agent reaches for it whenever it writes a PR."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "prototype",
+          "evidence": [
+            {
+              "line": 20,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through a prototype, bridged by **`/handoff`** in both directions (a prototype lives in its own directory, which is exactly what `/handoff` is for; see Phase boundaries):"
+            },
+            {
+              "line": 22,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **`/prototype`** to answer the question with throwaway code,"
+            },
+            {
+              "line": 87,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/prototype`** is a small, throwaway program that answers one design question: does this state model feel right, or what should this UI look like. Throwaway is a constraint on how the code is written, not a promise to destroy it: the answer folds into the real code, and the prototype itself is kept as a **primary source** on a `prototype/<name>` branch out of main, pointed at from the implementation issue. It's the detour in step 2 of the main flow, but reach for it any time a design question is hard to settle on paper."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "research",
+          "evidence": [
+            {
+              "line": 88,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/research`**: delegate reading legwork to a **background agent**: it investigates a question against **primary sources**, then leaves a cited Markdown file in the repo. Keep working while it reads. The file it produces is something to take *into* the main flow at `/grill-with-docs`, since research feeds the thinking rather than replacing it."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "retro",
+          "evidence": [
+            {
+              "line": 34,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "4. **`/retro`** closes the loop. After a build, and especially one that went sideways, it looks back over the session and suggests changes to the agent's **environment**, not the code: navigation pointers, automated checks, the coding standards `/code-review` enforces, steering files, tooling. Mechanical mistakes become deterministic checks; judgement calls become coding standards. The next build then starts from a better environment."
+            },
+            {
+              "line": 38,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket. Run `/retro` in the session it's looking back on, before you clear; after clearing, point it at that session's log instead."
+            },
+            {
+              "line": 50,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **Something's broken** → **`/diagnosing-bugs`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Once the fix is in, run **`/retro`** in the same session to ask what would have prevented the bug; where the real finding is that there's no good seam to lock it down, that's a job for **`/improve-codebase-architecture`**."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 97,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "**`/setup-matt-pocock-skills`**: run before your first engineering flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "tdd",
+          "evidence": [
+            {
+              "line": 30,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point."
+            },
+            {
+              "line": 67,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/codebase-design`** is the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `/tdd` and `/improve-codebase-architecture` both speak it."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "teach",
+          "evidence": [
+            {
+              "line": 92,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/teach`**: learn a concept over multiple sessions, using the current directory as a stateful workspace."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "to-questionnaire",
+          "evidence": [
+            {
+              "line": 89,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/grill-with-docs` or `/to-spec`."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "to-spec",
+          "evidence": [
+            {
+              "line": 25,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. Then work the tickets one of two ways:"
+            },
+            {
+              "line": 54,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "  When the map clears, **it hands off, it doesn't build**: merge onto the main flow at **`/to-spec`**, which collapses the map's linked decisions into a buildable plan, then `/to-tickets` and `/implement` as usual. Looping the map straight into `/implement` skips that collapse and throws the linked detail away, so go straight to `/implement` only when the effort turned out genuinely small."
+            },
+            {
+              "line": 89,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/grill-with-docs` or `/to-spec`."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "to-tickets",
+          "evidence": [
+            {
+              "line": 25,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "   - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. Then work the tickets one of two ways:"
+            },
+            {
+              "line": 38,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "Keep steps 1–3 in **one unbroken context window** (don't compact or clear until after `/to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket. Run `/retro` in the session it's looking back on, before you clear; after clearing, point it at that session's log instead."
+            },
+            {
+              "line": 40,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "The limit on this is the **[smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**: the window (~150k tokens on state-of-the-art models) within which the model still reasons sharply. If a session approaches it before `/to-tickets`, don't push on degraded; `/compact` at the nearest phase boundary and carry on (see Phase boundaries)."
+            },
+            {
+              "line": 48,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "  Triage is only for issues **you didn't create**: bug reports, incoming feature requests, anything that arrives raw. Tickets that `/to-tickets` produced are already agent-ready, so **don't triage them**."
+            },
+            {
+              "line": 54,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "  When the map clears, **it hands off, it doesn't build**: merge onto the main flow at **`/to-spec`**, which collapses the map's linked decisions into a buildable plan, then `/to-tickets` and `/implement` as usual. Looping the map straight into `/implement` skips that collapse and throws the linked detail away, so go straight to `/implement` only when the effort turned out genuinely small."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "triage",
+          "evidence": [
+            {
+              "line": 46,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **Bugs and requests piling up** → **`/triage`**. It moves issues through triage roles and produces agent-ready issues, which **`/implement`** later picks up."
+            },
+            {
+              "line": 48,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "  Triage is only for issues **you didn't create**: bug reports, incoming feature requests, anything that arrives raw. Tickets that `/to-tickets` produced are already agent-ready, so **don't triage them**."
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            },
+            {
+              "line": 97,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "**`/setup-matt-pocock-skills`**: run before your first engineering flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "wait-what",
+          "evidence": [
+            {
+              "line": 91,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/wait-what`** is the corrective for a message that didn't land. Use it mid-conversation, inside any other skill, and the agent re-pitches what it just said with the context you were missing, in plain English, using the `GLOSSARY.md` vocabulary. It works after the fact; `/grill-with-docs` is the upfront cure, because a shared language agreed early is what stops the jargon arriving at all."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "wayfinder",
+          "evidence": [
+            {
+              "line": 52,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **A huge, foggy effort: a greenfield project or a huge feature build, too big for one session** → **`/wayfinder`**, the most cognitively demanding flow here. When the way from here to the destination isn't visible yet, it charts a **shared map** of **decision tickets** on the issue tracker and resolves them one at a time, producing **decisions, not deliverables**, until the fog is pushed back and the way is clear. Where **`/grill-with-docs`** sharpens an idea you can hold in one session, wayfinder is for the idea you can't, and it's slower and denser, so save it for exactly that, never a well-scoped feature."
+            },
+            {
+              "line": 86,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grill-me` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "wizard",
+          "evidence": [
+            {
+              "line": 90,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/wizard`** is for the steps only a **human** can take: provisioning infrastructure, setting up credentials or CI secrets, clicking through an unfamiliar third-party dashboard, running a one-off migration or cutover. It generates an interactive bash script that opens each URL, captures each value, and writes it into `.env` and GitHub secrets, so the procedure stops being something you re-explain to an agent every time. Model-invoked, so the agent reaches for it the moment it hits a wall only you can pass. If the agent could just do it itself, it should; this is for where a human is genuinely in the loop."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "writing-for-agents",
+          "evidence": [
+            {
+              "line": 93,
+              "path": "skills/engineering/ask-matt/SKILL.md",
+              "text": "- **`/writing-for-agents`** is the reference for writing documents agents consume: skills, AGENTS.md, pointed-at docs."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Ask which skill or flow fits your situation. A router over the skills in this repo.",
+      "displayName": "ask-matt",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/ask-matt",
+      "upstreamHash": "d33672eabf309767df980f1f4fe708c396d70ecf12d1a6cde2c49fa0eef4a617",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-code-review",
+      "bucket": "engineering",
+      "canonicalId": "code-review",
+      "compatRules": {
+        "alias": [
+          "alias-name-code-review"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 13,
+              "path": "skills/engineering/code-review/SKILL.md",
+              "text": "The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\".",
+      "displayName": "code-review",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "git",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "always"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [
+        "implement",
+        "implement-spec"
+      ],
+      "sourcePath": "skills/engineering/code-review",
+      "upstreamHash": "267da28fbc74dccfc3cb133bd8d0b8e1fcd4dfbe8cf89dc718cd1544332bc9e7",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-codebase-design",
+      "bucket": "engineering",
+      "canonicalId": "codebase-design",
+      "compatRules": {
+        "alias": [
+          "alias-name-codebase-design"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.",
+      "displayName": "codebase-design",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [
+        "improve-codebase-architecture",
+        "setup-ts-deep-modules",
+        "tdd"
+      ],
+      "sourcePath": "skills/engineering/codebase-design",
+      "upstreamHash": "31e2ba1fb558b7ff1d1da860849314ce8453b71617376250680dc8d62b536ae8",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-diagnosing-bugs",
+      "bucket": "engineering",
+      "canonicalId": "diagnosing-bugs",
+      "compatRules": {
+        "alias": [
+          "alias-name-diagnosing-bugs"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Diagnosis loop for hard bugs and performance regressions. Use when the user says \"diagnose\"/\"debug this\", or reports something broken/throwing/failing/slow.",
+      "displayName": "diagnosing-bugs",
+      "hasScripts": true,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "bash",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "browser",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "human-terminal",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/diagnosing-bugs",
+      "upstreamHash": "4253fa5be1c567aeb63bf976b50d5b4caeaa9b1a3f2e327b502df6b0a1a33d2c",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-domain-modeling",
+      "bucket": "engineering",
+      "canonicalId": "domain-modeling",
+      "compatRules": {
+        "alias": [
+          "alias-name-domain-modeling"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR.",
+      "displayName": "domain-modeling",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [
+        "grill-with-docs",
+        "improve-codebase-architecture",
+        "triage",
+        "wayfinder"
+      ],
+      "sourcePath": "skills/engineering/domain-modeling",
+      "upstreamHash": "d05c97149942ac08e61248613b6c6bfb5a58f3a0cb9bf475d340adc61b6172f4",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-grill-with-docs",
+      "bucket": "engineering",
+      "canonicalId": "grill-with-docs",
+      "compatRules": {
+        "alias": [
+          "alias-name-grill-with-docs"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 7,
+              "path": "skills/engineering/grill-with-docs/SKILL.md",
+              "text": "Call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 7,
+              "path": "skills/engineering/grill-with-docs/SKILL.md",
+              "text": "Call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.",
+      "displayName": "grill-with-docs",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/grill-with-docs",
+      "upstreamHash": "f947092ad32ee0141f0bc99c37301abc31ce71bf74501ee280c3c93d4c41d63d",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-implement",
+      "bucket": "engineering",
+      "canonicalId": "implement",
+      "compatRules": {
+        "alias": [
+          "alias-name-implement"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "code-review",
+          "evidence": [
+            {
+              "line": 15,
+              "path": "skills/engineering/implement/SKILL.md",
+              "text": "Once done, call the Skill tool with \"code-review\" to review the work."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "tdd",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/implement/SKILL.md",
+              "text": "Call the Skill tool with \"tdd\" where possible, at pre-agreed seams."
+            }
+          ],
+          "kind": "conditional-hard"
+        }
+      ],
+      "description": "Implement a piece of work based on a spec or set of tickets.",
+      "displayName": "implement",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "git",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/implement",
+      "upstreamHash": "ce053a1228531e6ca282b8aa0992f2f62eec6b8fc924c9392dd4353c50c5ca94",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-implement-spec",
+      "bucket": "engineering",
+      "canonicalId": "implement-spec",
+      "compatRules": {
+        "alias": [
+          "alias-name-implement-spec"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "code-review",
+          "evidence": [
+            {
+              "line": 36,
+              "path": "skills/engineering/implement-spec/SKILL.md",
+              "text": "7. Once all tickets are complete, call the Skill tool with `code-review` on the integration branch. Fix all issues raised by the code review in a single **implementer subagent**."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 9,
+              "path": "skills/engineering/implement-spec/SKILL.md",
+              "text": "The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "tdd",
+          "evidence": [
+            {
+              "line": 29,
+              "path": "skills/engineering/implement-spec/SKILL.md",
+              "text": "   - calls the Skill tool with `tdd` to build the ticket;"
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "Implement the result of /to-spec and /to-tickets in code.",
+      "displayName": "implement-spec",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "git",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        },
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "always"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/implement-spec",
+      "upstreamHash": "8bcea86866cb4e265dd21cc8a877ae91218ee07ad8717f6f404d676dd3b139be",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-improve-codebase-architecture",
+      "bucket": "engineering",
+      "canonicalId": "improve-codebase-architecture",
+      "compatRules": {
+        "alias": [
+          "alias-name-improve-codebase-architecture"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "codebase-design",
+          "evidence": [
+            {
+              "line": 13,
+              "path": "skills/engineering/improve-codebase-architecture/SKILL.md",
+              "text": "- Call the Skill tool with \"codebase-design\" for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, \"the interface is the test surface\", \"one adapter = hypothetical seam, two = real\"). Use these terms exactly in every suggestion, and don't drift into \"component,\" \"service,\" \"API,\" or \"boundary.\""
+            },
+            {
+              "line": 71,
+              "path": "skills/engineering/improve-codebase-architecture/SKILL.md",
+              "text": "- **Want to explore alternative interfaces for the deepened module?** Call the Skill tool with \"codebase-design\" and use its design-it-twice parallel sub-agent pattern."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 66,
+              "path": "skills/engineering/improve-codebase-architecture/SKILL.md",
+              "text": "Side effects happen inline as decisions crystallize; call the Skill tool with \"domain-modeling\" to keep the domain model current as you go:"
+            }
+          ],
+          "kind": "conditional-hard"
+        },
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 64,
+              "path": "skills/engineering/improve-codebase-architecture/SKILL.md",
+              "text": "Once the user picks a candidate, call the Skill tool with \"grilling\" to walk the decision tree with them: constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive."
+            }
+          ],
+          "kind": "conditional-hard"
+        }
+      ],
+      "description": "Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.",
+      "displayName": "improve-codebase-architecture",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "git",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        },
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/improve-codebase-architecture",
+      "upstreamHash": "f8c8bd125bd20656f10c1f104af2d148eb33daa6967bc56a3892a13da7f92acb",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-pr",
+      "bucket": "engineering",
+      "canonicalId": "pr",
+      "compatRules": {
+        "alias": [
+          "alias-name-pr"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Use when writing a PR body.",
+      "displayName": "pr",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/pr",
+      "upstreamHash": "567896a330631482a7f94af9daa3e41bc372946e9b45794ce135de422b167cbf",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-prototype",
+      "bucket": "engineering",
+      "canonicalId": "prototype",
+      "compatRules": {
+        "alias": [
+          "alias-name-prototype"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.",
+      "displayName": "prototype",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "browser",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [
+        "wayfinder"
+      ],
+      "sourcePath": "skills/engineering/prototype",
+      "upstreamHash": "d9669ed1b8c9ff1540efb2dffdf24876b9355107c34d1cb511b645e52b4cf8c5",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-research",
+      "bucket": "engineering",
+      "canonicalId": "research",
+      "compatRules": {
+        "alias": [
+          "alias-name-research"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.",
+      "displayName": "research",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [
+        "wayfinder"
+      ],
+      "sourcePath": "skills/engineering/research",
+      "upstreamHash": "ac6c55c66eda9f79b6ff6ddb02e92675c8fca9cb2e84ae5c81bbe9cb3094ab29",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-retro",
+      "bucket": "engineering",
+      "canonicalId": "retro",
+      "compatRules": {
+        "alias": [
+          "alias-name-retro"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "writing-for-agents",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/retro/SKILL.md",
+              "text": "1. Call the Skill tool with `writing-for-agents` for the writing style guide."
+            },
+            {
+              "line": 44,
+              "path": "skills/engineering/retro/SKILL.md",
+              "text": "- Skills: use skills for docs (since their description goes into the agent's context window), or for user-invoked commands. Follow the advice in the `writing-for-agents` skill."
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "Conduct a retrospective on a coding session.",
+      "displayName": "retro",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/retro",
+      "upstreamHash": "5f10c30c0f31c8d0a9fabc46da164a459321f0caef7d91f81d7e85d2760c5280",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-setup-matt-pocock-skills",
+      "bucket": "engineering",
+      "canonicalId": "setup-matt-pocock-skills",
+      "compatRules": {
+        "alias": [
+          "alias-name-setup-matt-pocock-skills"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/setup-matt-pocock-skills/domain.md",
+              "text": "If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved."
+            },
+            {
+              "line": 45,
+              "path": "skills/engineering/setup-matt-pocock-skills/domain.md",
+              "text": "If the concept you need isn't in the glossary yet, that's a signal: either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `/domain-modeling`)."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "grill-with-docs",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/setup-matt-pocock-skills/domain.md",
+              "text": "If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "improve-codebase-architecture",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/setup-matt-pocock-skills/domain.md",
+              "text": "If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "triage",
+          "evidence": [
+            {
+              "line": 29,
+              "path": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
+              "text": "- Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all."
+            },
+            {
+              "line": 51,
+              "path": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
+              "text": "**Section B: Triage label vocabulary.** Skip this section entirely if the `triage` skill isn't installed (exploration told you), since an uninstalled skill needs no labels."
+            }
+          ],
+          "kind": "presence-check"
+        },
+        {
+          "canonicalId": "triage",
+          "evidence": [
+            {
+              "line": 19,
+              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
+              "text": "**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_"
+            },
+            {
+              "line": 19,
+              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
+              "text": "**MRs as a request surface: no.** _(Set to `yes` if this repo treats external merge requests as feature requests; `/triage` reads this flag.)_"
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "wayfinder",
+          "evidence": [
+            {
+              "line": 39,
+              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
+              "text": "Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets."
+            },
+            {
+              "line": 39,
+              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
+              "text": "Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets."
+            },
+            {
+              "line": 23,
+              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-local.md",
+              "text": "Used by `/wayfinder`. The **map** is a file with one **child** file per ticket."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Configure this repo for the engineering skills: set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills.",
+      "displayName": "setup-matt-pocock-skills",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "git",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "jq",
+          "when": "conditional"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/setup-matt-pocock-skills",
+      "upstreamHash": "46daa10ca70d3a194a56d16900abac8ad304fd3f8d6f25789bb603a781df16d4",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-tdd",
+      "bucket": "engineering",
+      "canonicalId": "tdd",
+      "compatRules": {
+        "alias": [
+          "alias-name-tdd"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "code-review",
+          "evidence": [
+            {
+              "line": 38,
+              "path": "skills/engineering/tdd/SKILL.md",
+              "text": "- **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "canonicalId": "codebase-design",
+          "evidence": [
+            {
+              "line": 26,
+              "path": "skills/engineering/tdd/SKILL.md",
+              "text": "When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with \"codebase-design\" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run."
+            }
+          ],
+          "kind": "conditional-hard"
+        }
+      ],
+      "description": "Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions \"red-green-refactor\", or wants integration tests.",
+      "displayName": "tdd",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [
+        "implement",
+        "implement-spec"
+      ],
+      "sourcePath": "skills/engineering/tdd",
+      "upstreamHash": "e90744682a94d43e25a64cc930bbb422494c596c59fe21d2986a204e89d2d163",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-to-spec",
+      "bucket": "engineering",
+      "canonicalId": "to-spec",
+      "compatRules": {
+        "alias": [
+          "alias-name-to-spec"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 9,
+              "path": "skills/engineering/to-spec/SKILL.md",
+              "text": "The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed.",
+      "displayName": "to-spec",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/to-spec",
+      "upstreamHash": "0530283696e735589035b65c2ea033010f32844969a64b7048290c43b5bc5701",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-to-tickets",
+      "bucket": "engineering",
+      "canonicalId": "to-tickets",
+      "compatRules": {
+        "alias": [
+          "alias-name-to-tickets"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/engineering/to-tickets/SKILL.md",
+              "text": "The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker (edges as text in one file per ticket locally, or native blocking links on a real tracker).",
+      "displayName": "to-tickets",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/to-tickets",
+      "upstreamHash": "6f3861ed90d08151d984a5836d1fe63f0cc3c08b72ea6600e9c697f8ff9909fb",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-triage",
+      "bucket": "engineering",
+      "canonicalId": "triage",
+      "compatRules": {
+        "alias": [
+          "alias-name-triage"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 76,
+              "path": "skills/engineering/triage/SKILL.md",
+              "text": "4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for \"grilling\" and \"domain-modeling\", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land."
+            }
+          ],
+          "kind": "conditional-hard"
+        },
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 76,
+              "path": "skills/engineering/triage/SKILL.md",
+              "text": "4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for \"grilling\" and \"domain-modeling\", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land."
+            }
+          ],
+          "kind": "conditional-hard"
+        },
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 43,
+              "path": "skills/engineering/triage/SKILL.md",
+              "text": "These are canonical role names. The actual label strings used in the issue tracker may differ. The mapping should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready briefs.",
+      "displayName": "triage",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/triage",
+      "upstreamHash": "b39c5dde584807cd54d7878ae8b8810e303e7542f0d1d94c9d3e4e56028110d8",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-wayfinder",
+      "bucket": "engineering",
+      "canonicalId": "wayfinder",
+      "compatRules": {
+        "alias": [
+          "alias-name-wayfinder"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "domain-modeling",
+          "evidence": [
+            {
+              "line": 79,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "- **Grilling** (HITL): Conversation. The default case. Always call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            },
+            {
+              "line": 111,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "1. **Name the destination.** Call the Skill tool twice, for \"grilling\" and \"domain-modeling\", to pin down what this map is finding its way to: the spec, decision, or change. The destination fixes the scope, so it's settled first."
+            },
+            {
+              "line": 124,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "3. Resolve it as the type its `wayfinder:<type>` label names (see [Ticket Types](#ticket-types)). Read the label, not just the body: the body never states the type. **Zoom as needed**: fetch the full body of any related or closed ticket on demand; call the Skill tool for whichever skills the `## Notes` block names. If in doubt, call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 79,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "- **Grilling** (HITL): Conversation. The default case. Always call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            },
+            {
+              "line": 111,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "1. **Name the destination.** Call the Skill tool twice, for \"grilling\" and \"domain-modeling\", to pin down what this map is finding its way to: the spec, decision, or change. The destination fixes the scope, so it's settled first."
+            },
+            {
+              "line": 124,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "3. Resolve it as the type its `wayfinder:<type>` label names (see [Ticket Types](#ticket-types)). Read the label, not just the body: the body never states the type. **Zoom as needed**: fetch the full body of any related or closed ticket on demand; call the Skill tool for whichever skills the `## Notes` block names. If in doubt, call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            }
+          ],
+          "kind": "hard"
+        },
+        {
+          "canonicalId": "prototype",
+          "evidence": [
+            {
+              "line": 78,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "- **Prototype** (HITL): Raise the fidelity of the discussion by making a cheap, rough, concrete artifact to react to (an outline, a rough take, a stub, or UI/logic code) by calling the Skill tool with \"prototype\". Links the prototype as an asset. Use when \"how should it look\" or \"how should it behave\" is the key question."
+            }
+          ],
+          "kind": "conditional-hard"
+        },
+        {
+          "canonicalId": "research",
+          "evidence": [
+            {
+              "line": 77,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "- **Research** (AFK): Reading documentation, third-party APIs, or local resources like knowledge bases to surface a fact a decision waits on. Resolved by a subagent that calls the Skill tool with \"research\". Use when knowledge outside the current working directory is required."
+            },
+            {
+              "line": 115,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "5. **Fire the research subagents.** For each `research` ticket you just created, spin up a subagent that calls the Skill tool with \"research\" to resolve it in parallel, capturing its findings on a throwaway `research/<name>` branch with a context pointer from the ticket. Push the branch but open no PR: it is never merged."
+            }
+          ],
+          "kind": "conditional-hard"
+        },
+        {
+          "canonicalId": "setup-matt-pocock-skills",
+          "evidence": [
+            {
+              "line": 25,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`. Consult the tracker doc's \"Wayfinding operations\" section for how _this_ repo expresses them. If no tracker has been provided, default to the local-markdown tracker."
+            }
+          ],
+          "kind": "recommendation"
+        },
+        {
+          "evidence": [
+            {
+              "line": 124,
+              "path": "skills/engineering/wayfinder/SKILL.md",
+              "text": "3. Resolve it as the type its `wayfinder:<type>` label names (see [Ticket Types](#ticket-types)). Read the label, not just the body: the body never states the type. **Zoom as needed**: fetch the full body of any related or closed ticket on demand; call the Skill tool for whichever skills the `## Notes` block names. If in doubt, call the Skill tool twice, for \"grilling\" and \"domain-modeling\"."
+            }
+          ],
+          "kind": "dynamic",
+          "source": "ticket-notes"
+        }
+      ],
+      "description": "Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.",
+      "displayName": "wayfinder",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "command",
+          "name": "glab",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        },
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "conditional"
+        },
+        {
+          "kind": "project-file",
+          "path": "docs/agents/issue-tracker.md",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/wayfinder",
+      "upstreamHash": "dabf54cbbb50a160e736cacd7271a7e2744081d32b3dff56826a85f180644ebf",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-wizard",
+      "bucket": "engineering",
+      "canonicalId": "wizard",
+      "compatRules": {
+        "alias": [
+          "alias-name-wizard"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. Don't invoke this for steps the agent can perform itself.",
+      "displayName": "wizard",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "bash",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "gh",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "browser",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "human-terminal",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/engineering/wizard",
+      "upstreamHash": "8ee58d52bac2295494d41acbe1f62b165567e33f8bf5ff30c33ecc71c565709d",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-chief-of-staff",
+      "bucket": "in-progress",
+      "canonicalId": "chief-of-staff",
+      "compatRules": {
+        "alias": [
+          "alias-name-chief-of-staff"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [],
+      "description": "Pursue a long-running goal in a single session by co-ordinating subagents.",
+      "displayName": "chief-of-staff",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/chief-of-staff",
+      "upstreamHash": "fbfa6928a33bb6d5d8806390688f8e5f166a47bb98f412e41c888ca25096a80b",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-loop-me",
+      "bucket": "in-progress",
+      "canonicalId": "loop-me",
+      "compatRules": {
+        "alias": [
+          "alias-name-loop-me"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 8,
+              "path": "skills/in-progress/loop-me/SKILL.md",
+              "text": "Run a stateful `/grilling` session whose only output is **workflow** specs. Use the grilling discipline (relentless, a round of questions at a time, a recommended answer attached to each) aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things."
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "Grill me about specs for the workflows I want to build, within this workspace.",
+      "displayName": "loop-me",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/loop-me",
+      "upstreamHash": "a3f715ad616136fa7565f3a644297736382ae4b8e90eb978bafae3eb568a649c",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-setup-ts-deep-modules",
+      "bucket": "in-progress",
+      "canonicalId": "setup-ts-deep-modules",
+      "compatRules": {
+        "alias": [
+          "alias-name-setup-ts-deep-modules"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [
+        {
+          "canonicalId": "codebase-design",
+          "evidence": [
+            {
+              "line": 11,
+              "path": "skills/in-progress/setup-ts-deep-modules/SKILL.md",
+              "text": "For the vocabulary (deep module, interface, seam, depth), call the Skill tool with \"codebase-design\" and use its language throughout."
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its entry-point files. User-invoked.",
+      "displayName": "setup-ts-deep-modules",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "command",
+          "name": "depcruise",
+          "when": "always"
+        },
+        {
+          "kind": "command",
+          "name": "npm",
+          "when": "conditional"
+        },
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/setup-ts-deep-modules",
+      "upstreamHash": "ebe03ff1d342db5fdf03729d711abfcda8bfd409aa756e5540f63a24007cf022",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-writing-beats",
+      "bucket": "in-progress",
+      "canonicalId": "writing-beats",
+      "compatRules": {
+        "alias": [
+          "alias-name-writing-beats"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [],
+      "description": "Writing, exploit; assemble raw material into a journey of beats, grounding each term before a beat leans on it.",
+      "displayName": "writing-beats",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/writing-beats",
+      "upstreamHash": "813c53f4a833da4a8f8fdd0209a4e71622578252f153ac8b37507e7e1300387c",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-writing-fragments",
+      "bucket": "in-progress",
+      "canonicalId": "writing-fragments",
+      "compatRules": {
+        "alias": [
+          "alias-name-writing-fragments"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 9,
+              "path": "skills/in-progress/writing-fragments/SKILL.md",
+              "text": "This is pure **explore**: widen the space of what could be written without committing to structure. Committing is _exploit_, a separate skill's job. Run a grilling session that produces fragments, interviewing the user relentlessly about whatever they want to write about. Imposing phases, outlines, or article structure is out of scope here."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Writing, explore: mine raw fragments, no structure yet.",
+      "displayName": "writing-fragments",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/writing-fragments",
+      "upstreamHash": "11283f672842d8ca140c9455967d6b1bdc17fdd82f37b7129d431e75cde65745",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-writing-shape",
+      "bucket": "in-progress",
+      "canonicalId": "writing-shape",
+      "compatRules": {
+        "alias": [
+          "alias-name-writing-shape"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 43,
+              "path": "skills/in-progress/writing-shape/SKILL.md",
+              "text": "This is a grilling session inverted. In ideation, the question was \"what are you actually noticing?\" Here it's \"what is this article actually arguing, and in what order does the reader need to hear it?\" Push back. Refuse to let weak transitions slide. If a paragraph doesn't earn its place, cut it."
+            }
+          ],
+          "kind": "recommendation"
+        }
+      ],
+      "description": "Writing, exploit: shape raw material into an article, paragraph by paragraph.",
+      "displayName": "writing-shape",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/writing-shape",
+      "upstreamHash": "7bec70620be2bd40d0607b741778aa3fa3693237b573f9e3bcc3bf970274b4f1",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-grill-me",
+      "bucket": "productivity",
+      "canonicalId": "grill-me",
+      "compatRules": {
+        "alias": [
+          "alias-name-grill-me"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "canonicalId": "grilling",
+          "evidence": [
+            {
+              "line": 7,
+              "path": "skills/productivity/grill-me/SKILL.md",
+              "text": "Call the Skill tool with \"grilling\"."
+            }
+          ],
+          "kind": "hard"
+        }
+      ],
+      "description": "A relentless interview to sharpen a plan or design.",
+      "displayName": "grill-me",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/productivity/grill-me",
+      "upstreamHash": "f23cf53f92b7e493774c64e4c889b03be1c551f2e771195ee1caff2e74cabf10",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-grilling",
+      "bucket": "productivity",
+      "canonicalId": "grilling",
+      "compatRules": {
+        "alias": [
+          "alias-name-grilling"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.",
+      "displayName": "grilling",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "delegation",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [
+        "grill-me",
+        "grill-with-docs",
+        "improve-codebase-architecture",
+        "loop-me",
+        "triage",
+        "wayfinder"
+      ],
+      "sourcePath": "skills/productivity/grilling",
+      "upstreamHash": "04567f3c0a347298852bd1f895592294b445bbdfe64d705aeb9fde4dc4ea2baf",
+      "userInvoked": false
+    },
+    {
+      "aliasName": "matt-pocock-handoff",
+      "bucket": "productivity",
+      "canonicalId": "handoff",
+      "compatRules": {
+        "alias": [
+          "alias-name-handoff"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [
+        {
+          "evidence": [
+            {
+              "line": 10,
+              "path": "skills/productivity/handoff/SKILL.md",
+              "text": "Include a \"suggested skills\" section in the document, naming which skills the next agent should call the Skill tool for."
+            }
+          ],
+          "kind": "dynamic",
+          "source": "receiving-agent-advice"
+        }
+      ],
+      "description": "Compact the current conversation into a handoff document for another agent to pick up.",
+      "displayName": "handoff",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "skill-loading",
+          "when": "always"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/productivity/handoff",
+      "upstreamHash": "2ae8d6adb1b27cebe589cdbc917fad76d9fdaa91a9d2388a4573b8551a7026fc",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-teach",
+      "bucket": "productivity",
+      "canonicalId": "teach",
+      "compatRules": {
+        "alias": [
+          "alias-name-teach"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Teach the user a new skill or concept, within this workspace.",
+      "displayName": "teach",
+      "hasScripts": false,
+      "prereqs": [
+        {
+          "kind": "capability",
+          "name": "browser",
+          "when": "conditional"
+        }
+      ],
+      "requiredBy": [],
+      "sourcePath": "skills/productivity/teach",
+      "upstreamHash": "a5bdbc9ea70b7ff9741a4aa01fc048edfb3ff520e10d38b3b28424fb61e97291",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-to-questionnaire",
+      "bucket": "productivity",
+      "canonicalId": "to-questionnaire",
+      "compatRules": {
+        "alias": [
+          "alias-name-to-questionnaire"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Turn a decision you can't fully answer into a questionnaire for someone else to fill in.",
+      "displayName": "to-questionnaire",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/productivity/to-questionnaire",
+      "upstreamHash": "2a04aa238999749b8ffdb09cfecba0ac9c6d2e87214e492f769f7df7469b11d8",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-wait-what",
+      "bucket": "productivity",
+      "canonicalId": "wait-what",
+      "compatRules": {
+        "alias": [
+          "alias-name-wait-what"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Stop. That last message did not land: re-pitch it.",
+      "displayName": "wait-what",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/productivity/wait-what",
+      "upstreamHash": "ac6a6026d199758c293657245ab09b274fe074f9e4448dc4e8fa8f6032075b5d",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-writing-for-agents",
+      "bucket": "productivity",
+      "canonicalId": "writing-for-agents",
+      "compatRules": {
+        "alias": [
+          "alias-name-writing-for-agents"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": true,
+      "dependsOn": [],
+      "description": "Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.",
+      "displayName": "writing-for-agents",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [
+        "retro"
+      ],
+      "sourcePath": "skills/productivity/writing-for-agents",
+      "upstreamHash": "fe5f1d31ece497160646a566d02cdcde2c8c0fe50a4f2e0bd42c13dcc96b48a2",
+      "userInvoked": false
+    }
+  ],
+  "upstream": {
+    "author": "Matt Pocock",
+    "commit": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
+    "committedAt": "2026-10-07T11:22:44+01:00",
+    "license": "MIT",
+    "ref": "main",
+    "repo": "mattpocock/skills",
+    "version": "1.3.1"
+  }
+}

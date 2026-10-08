@@ -1,0 +1,35 @@
+{
+  "name": "bb-plugin-matt-pocock-skills-for-bb",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Matt Pocock's engineering and productivity skills for bb, with experimental skills available by opt-in. Synced daily from mattpocock/skills.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erikmackinnon/bb-plugin-matt-pocock-skills-for-bb.git"
+  },
+  "engines": {
+    "bb": ">=0.45.0",
+    "bbPluginSdk": ">=0.6.15"
+  },
+  "bb": {
+    "name": "Matt Pocock skills for bb",
+    "description": "Matt Pocock's engineering and productivity skills for bb, with experimental skills available by opt-in. Synced daily from mattpocock/skills.",
+    "branding": {
+      "icon": "Layers"
+    },
+    "server": "./server.ts",
+    "app": "./app.tsx",
+    "skills": [
+      "matt-pocock/skills/engineering",
+      "matt-pocock/skills/productivity",
+      "matt-pocock/skills/in-progress"
+    ]
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.3.7",
+    "@radix-ui/react-slot": "^1.3.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  }
+}
