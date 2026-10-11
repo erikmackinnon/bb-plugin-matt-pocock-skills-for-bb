@@ -1654,7 +1654,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/wizard",
-      "upstreamHash": "8ee58d52bac2295494d41acbe1f62b165567e33f8bf5ff30c33ecc71c565709d",
+      "upstreamHash": "967a3fd5cf27da39e98e29c3fb80b8413807d5d74aeb43b783bcee5ee95b6494",
       "userInvoked": false
     },
     {
@@ -2066,8 +2066,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
-    "committedAt": "2026-10-07T11:22:44+01:00",
+    "commit": "49dd158d1076134a641b33efb035946536778336",
+    "committedAt": "2026-10-09T11:56:49+01:00",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",
