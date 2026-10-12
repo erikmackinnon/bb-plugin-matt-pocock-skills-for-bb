@@ -258,18 +258,27 @@ export class ConflictScanner {
   private pending = new Map<string, Promise<ScanSnapshot>>();
   private scopes = new Map<string, ScanScope>();
   private revisions = new Map<string, number>();
+  private lastComplete = new Map<string, ScanSnapshot>();
+  private retries = new Map<string, { attempt: number; timer: ReturnType<typeof setTimeout> }>();
   private stopped = false;
   private generation = 0;
   private discover: Discover;
   private names: readonly string[];
   private freshnessMs: number;
   private committed: (scope: ScanScope, changed: boolean) => void;
-  constructor(discover: Discover, names: readonly string[], committed: (scope: ScanScope, changed: boolean) => void, freshnessMs: number = mirrorConfig.conflicts.freshnessMs) {
-    this.discover = discover; this.names = names; this.committed = committed; this.freshnessMs = freshnessMs;
+  private retry: { baseMs: number; maxMs: number };
+  constructor(discover: Discover, names: readonly string[], committed: (scope: ScanScope, changed: boolean) => void,
+    freshnessMs: number = mirrorConfig.conflicts.freshnessMs, retry: { baseMs: number; maxMs: number } = mirrorConfig.conflicts.retryMs) {
+    this.discover = discover; this.names = names; this.committed = committed; this.freshnessMs = freshnessMs; this.retry = retry;
   }
   peek(scope: ScanScope): ScanSnapshot | undefined {
-    const snapshot = this.snapshots.get(scopeKey(scope));
-    return snapshot ? structuredClone(snapshot) : undefined;
+    const key = scopeKey(scope);
+    const snapshot = this.snapshots.get(key);
+    const held = this.lastComplete.get(key);
+    if (!snapshot || !held || (snapshot.complete && snapshot.freshness !== "invalidated")) return snapshot ? structuredClone(snapshot) : undefined;
+    // While rediscovery is pending or failing, the last complete scan stays deliverable. Clashes seen since then still yield.
+    const sources = [...held.sources, ...snapshot.sources.filter(item => !held.sources.some(known => isDeepStrictEqual(known, item)))];
+    return structuredClone({ ...snapshot, freshness: "stale", complete: true, affectedUnknownNames: [], sources });
   }
   read(scope: ScanScope): ScanSnapshot | undefined {
     if (this.stopped) return undefined;
@@ -302,7 +311,10 @@ export class ConflictScanner {
         const previous = this.snapshots.get(key);
         const evidence = (value: ScanSnapshot) => [value.sources, value.complete, value.affectedUnknownNames, value.errors];
         const changed = !previous || !isDeepStrictEqual(evidence(previous), evidence(snapshot));
-        this.snapshots.set(key, snapshot); this.committed(scope, changed);
+        this.snapshots.set(key, snapshot);
+        if (snapshot.complete) this.lastComplete.set(key, snapshot);
+        this.scheduleRetry(scope, discovery.errors.length > 0);
+        this.committed(scope, changed);
       }
       return structuredClone(snapshot);
     }).finally(() => {
@@ -312,12 +324,29 @@ export class ConflictScanner {
     this.pending.set(key, operation);
     return operation;
   }
+  private scheduleRetry(scope: ScanScope, failed: boolean) {
+    const key = scopeKey(scope);
+    const previous = this.retries.get(key);
+    if (previous) clearTimeout(previous.timer);
+    if (!failed) { this.retries.delete(key); return; }
+    const attempt = previous?.attempt ?? 0;
+    const timer = setTimeout(() => { if (!this.stopped && this.scopes.has(key)) void this.refresh(scope); },
+      Math.min(this.retry.baseMs * 2 ** attempt, this.retry.maxMs));
+    timer.unref?.();
+    this.retries.set(key, { attempt: attempt + 1, timer });
+  }
+  private forget(key: string) {
+    const retry = this.retries.get(key);
+    if (retry) clearTimeout(retry.timer);
+    this.retries.delete(key); this.lastComplete.delete(key);
+  }
   seedGeneration(generation: number) { this.generation = Math.max(this.generation, generation); }
   restore(snapshot: ScanSnapshot) {
     if (this.stopped) return;
     const key = scopeKey(snapshot.scope);
     this.scopes.set(key, structuredClone(snapshot.scope));
     this.snapshots.set(key, { ...structuredClone(snapshot), freshness: snapshot.freshness === "invalidated" ? "invalidated" : "stale" });
+    if (snapshot.complete) this.lastComplete.set(key, { ...structuredClone(snapshot), freshness: "stale" });
     this.generation = Math.max(this.generation, snapshot.generation);
   }
   retain(projectId: string, applicable: ReadonlySet<string>) {
@@ -325,7 +354,7 @@ export class ConflictScanner {
       const key = scopeKey(scope);
       if (applicable.has(key)) continue;
       this.revisions.set(key, (this.revisions.get(key) ?? 0) + 1);
-      this.snapshots.delete(key); this.scopes.delete(key);
+      this.snapshots.delete(key); this.scopes.delete(key); this.forget(key);
     }
   }
   invalidate() {
@@ -337,7 +366,11 @@ export class ConflictScanner {
       void this.refresh(scope);
     }
   }
-  dispose() { this.stopped = true; this.snapshots.clear(); this.scopes.clear(); }
+  dispose() {
+    this.stopped = true;
+    for (const key of [...this.retries.keys()]) this.forget(key);
+    this.snapshots.clear(); this.scopes.clear(); this.lastComplete.clear();
+  }
 }
 
 export async function installedBbVersion(): Promise<string> {

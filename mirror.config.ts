@@ -57,6 +57,7 @@ export const mirrorConfig = {
   conflicts: {
     scanIntervalMs: 300_000,
     freshnessMs: 300_000,
+    retryMs: { baseMs: 2_000, maxMs: 60_000 },
     incompletePolicy: "yield-affected-names",
     refreshOn: ["page-open", "explicit-refresh", "plugin-change", "provider-change", "timer"],
     sourceAdapters: ["bb-plugin", "bb-user", "project", "shared-user", "shared-project", "inherited", "provider-user", "provider-project", "native-plugin", "command"],
