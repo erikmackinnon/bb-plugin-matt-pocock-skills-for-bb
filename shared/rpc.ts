@@ -11,7 +11,7 @@ export { STATE_CHANGED } from "./events.ts";
 const okSchema = z.strictObject({ ok: z.literal(true) });
 export const stateResponseSchema = z.strictObject({
   installedPluginVersion: z.string().optional(),
-  deliveryScopes: z.array(z.strictObject({ snapshot: scanSnapshotSchema, resolved: z.array(resolvedSkillSchema) })).optional(),
+  delivery: z.strictObject({ snapshot: scanSnapshotSchema, resolved: z.array(resolvedSkillSchema) }).nullable().optional(),
   catalog: catalogSchema, global: globalStateSchema, project: projectStateSchema.nullable(),
   resolved: z.array(resolvedSkillSchema),
   projects: z.array(z.strictObject({

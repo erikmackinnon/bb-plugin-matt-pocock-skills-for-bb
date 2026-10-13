@@ -90,12 +90,12 @@ export function resolveSkills(
     bbName: null, outcome: "unknown", active: false,
     reason: selection.active ? "off-scan" : selection.reason,
     conflict: {
-      scope: { projectId: "unscanned", providerId: "unscanned", environmentId: "unscanned", hostId: "unscanned" },
+      projectId: "unscanned",
       canonicalId: selection.canonicalId,
       requestedChoice: project && Object.hasOwn(project.conflicts, selection.canonicalId)
         ? project.conflicts[selection.canonicalId] : "unresolved",
       outcome: "unknown", effectiveName: null,
-      reason: "Delivery is resolved separately for each project, provider, environment and host.", sources: [],
+      reason: "Delivery is resolved separately for each project.", sources: [],
       snapshotGeneration: null, internalDependencyFor: [],
     },
   }));

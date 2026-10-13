@@ -98,10 +98,11 @@ function listRows(state: StateResponse, scope: Scope) {
     const catalogSkill = byId.get(skill.canonicalId);
     if (!catalogSkill) throw new Error(`Resolved skill is missing from the catalog: ${skill.canonicalId}`);
     const selection = selectionFor(state, scope, skill);
-    const deliveries = scope.kind === "global" ? [] : (state.deliveryScopes ?? []).flatMap(deliveryScope => {
-      const delivery = deliveryScope.resolved.find(row => row.canonicalId === skill.canonicalId);
+    const delivered = scope.kind === "global" ? null : state.delivery ?? null;
+    const deliveries = (delivered ? [delivered] : []).flatMap(entry => {
+      const delivery = entry.resolved.find(row => row.canonicalId === skill.canonicalId);
       return delivery ? [{
-        scope: deliveryScope.snapshot.scope, providerId: deliveryScope.snapshot.scope.providerId,
+        projectId: delivery.conflict.projectId, generation: entry.snapshot.generation,
         bbName: delivery.bbName, outcome: delivery.outcome, active: delivery.active,
         requestedChoice: delivery.conflict.requestedChoice, reason: delivery.reason,
         conflictReason: delivery.conflict.reason,
@@ -120,8 +121,8 @@ function listRows(state: StateResponse, scope: Scope) {
 
 function listText(state: StateResponse, scope: Scope) {
   const heading = scope.kind === "global"
-    ? "Global selection. Bucket defaults and saved choices; project delivery is evaluated per provider."
-    : `Project ${scope.projectId}. Selection changes apply to new sessions; delivery is shown per provider.`;
+    ? "Global selection. Bucket defaults and saved choices; delivery is evaluated per project."
+    : `Project ${scope.projectId}. Selection changes apply to new sessions.`;
   const rows = listRows(state, scope).map(skill => {
     const selection = skill.selection;
     const lines = [
@@ -130,11 +131,10 @@ function listText(state: StateResponse, scope: Scope) {
     ];
     if (scope.kind === "project") {
       if (skill.deliveries.length === 0) {
-        lines.push(`  Delivery: provider=unknown; scan pending; name=${skill.bbName ?? "none"}; active=${onOff(skill.active)}; outcome=${skill.outcome}; requested=${skill.conflict.requestedChoice}; reason=${skill.reason}; ${skill.conflict.reason}`);
+        lines.push(`  Delivery: scan pending; name=${skill.bbName ?? "none"}; active=${onOff(skill.active)}; outcome=${skill.outcome}; requested=${skill.conflict.requestedChoice}; reason=${skill.reason}; ${skill.conflict.reason}`);
       }
       for (const delivery of skill.deliveries) {
-        const context = delivery.scope;
-        lines.push(`  Delivery: project=${context.projectId}; provider=${delivery.providerId}; environment=${context.environmentId}; host=${context.hostId}; name=${delivery.bbName ?? "none"}; active=${onOff(delivery.active)}; outcome=${delivery.outcome}; requested=${delivery.requestedChoice}; reason=${delivery.reason}; ${delivery.conflictReason}`);
+        lines.push(`  Delivery: project=${delivery.projectId}; scan=${delivery.generation}; name=${delivery.bbName ?? "none"}; active=${onOff(delivery.active)}; outcome=${delivery.outcome}; requested=${delivery.requestedChoice}; reason=${delivery.reason}; ${delivery.conflictReason}`);
       }
     }
     return lines.join("\n");
@@ -170,9 +170,9 @@ export function registerCli(bb: BbPluginApi, handlers: PluginRpcHandlers<typeof 
             const result = await handlers.matt_pocock_conflicts({ projectId: scope.projectId, refresh: command === "conflicts" });
             return reply(result, [
               `Project ${scope.projectId}. Changes apply to new sessions; menu entries are static advertisements.`,
-              ...(result.snapshots.length === 0 ? ["Discovery pending"] : []),
-              ...result.snapshots.map(snapshot => `Scope ${JSON.stringify(snapshot.scope)}: ${snapshot.freshness}; complete=${snapshot.complete}; scanned=${snapshot.scannedAt}; errors=${snapshot.errors.join("; ") || "none"}`),
-              ...result.conflicts.map(row => `${row.canonicalId}: scope=${JSON.stringify(row.scope)}; requested=${row.requestedChoice}; outcome=${row.outcome}; name=${row.effectiveName ?? "none"}; ${row.reason}; sources=${JSON.stringify(row.sources)}; internal callers=${row.internalDependencyFor.join(", ") || "none"}`),
+              result.snapshot === null ? "Plugin scan pending"
+                : `Plugin scan ${result.snapshot.generation}: ${result.snapshot.freshness}; complete=${result.snapshot.complete}; scanned=${result.snapshot.scannedAt}; errors=${result.snapshot.errors.join("; ") || "none"}`,
+              ...result.conflicts.map(row => `${row.canonicalId}: requested=${row.requestedChoice}; outcome=${row.outcome}; name=${row.effectiveName ?? "none"}; ${row.reason}; sources=${JSON.stringify(row.sources)}; internal callers=${row.internalDependencyFor.join(", ") || "none"}`),
             ].join("\n"));
           }
           case "status": {

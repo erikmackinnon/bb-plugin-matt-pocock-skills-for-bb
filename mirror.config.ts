@@ -55,12 +55,10 @@ export const mirrorConfig = {
   },
   skillNames: { aliasPrefix: "matt-pocock-", maxLength: 64, maxCandidates: 256 },
   conflicts: {
-    scanIntervalMs: 300_000,
-    freshnessMs: 300_000,
     retryMs: { baseMs: 2_000, maxMs: 60_000 },
     incompletePolicy: "yield-affected-names",
-    refreshOn: ["page-open", "explicit-refresh", "plugin-change", "provider-change", "timer"],
-    sourceAdapters: ["bb-plugin", "bb-user", "project", "shared-user", "shared-project", "inherited", "provider-user", "provider-project", "native-plugin", "command"],
+    refreshOn: ["startup", "plugin-change", "explicit-refresh"],
+    sourceAdapters: ["bb-plugin", "bb-user"],
   },
   dependencies: {
     activationKinds: ["hard", "conditional-hard"],
@@ -129,7 +127,7 @@ export const mirrorConfig = {
   marketplace: {
     entryPath: "marketplace/matt-pocock-skills-for-bb.json",
     /** Store listing text: a one-sentence hook, then one capability per sentence. The manifest keeps its short line. */
-    description: "Gives your agents Matt Pocock's engineering and productivity skills as slash commands, from test-first development to issue triage. Choose which skills each project gets, or turn them on only in the projects you pick; Matt's 6 experimental skills stay off until you opt in. A skill you already have keeps its name, and you can keep both, with Matt's as matt-pocock-<name>. Turning off a skill that another one needs asks first and names what else changes. New releases follow mattpocock/skills daily; some skills use Git or GitHub CLI, and no account is needed.",
+    description: "Gives your agents Matt Pocock's engineering and productivity skills as slash commands, from test-first development to issue triage. Choose which skills each project gets, or turn them on only in the projects you pick; Matt's 6 experimental skills stay off until you opt in. A same-name skill from another plugin or your own bb skills keeps its name, and you can keep both, with Matt's as matt-pocock-<name>. Turning off a skill that another one needs asks first and names what else changes. New releases follow mattpocock/skills daily; some skills use Git or GitHub CLI, and no account is needed.",
     overviewPath: "overview/matt-pocock-skills-for-bb.md",
     screenshotPaths: ["screenshots/matt-pocock-skills-for-bb/overview.png", "screenshots/matt-pocock-skills-for-bb/project.png", "screenshots/matt-pocock-skills-for-bb/dependencies.png", "screenshots/matt-pocock-skills-for-bb/skills.png"],
     category: "code-and-reviews",

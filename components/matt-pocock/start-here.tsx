@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import type { MattState } from "./model";
 import type { ConflictState, ScanSnapshot } from "../../shared/conflicts";
-import { matchingSnapshot, verifiedDelivery } from "./conflict-details";
+import { verifiedDelivery } from "./conflict-details";
 
 function recommendation(state: MattState | undefined, canonicalId: string) {
   if (!state) return { name: `/${canonicalId}`, available: true, reason: "" };
@@ -33,7 +33,7 @@ function recommendation(state: MattState | undefined, canonicalId: string) {
   }
   // On, but not yet checked for same-name skills: the expected name is still the right advice.
   if (skill.outcome === "unknown") return { name: `/${canonicalId}`, available: true, reason: "" };
-  if (skill.outcome === "yielded") return { name: canonicalId, available: false, reason: "A skill you already have uses this name." };
+  if (skill.outcome === "yielded") return { name: canonicalId, available: false, reason: "Another plugin's skill uses this name." };
   return { name: canonicalId, available: false, reason: "This skill is unavailable in this project." };
 }
 
@@ -85,44 +85,32 @@ export function StartHere({
   onDismiss,
   state,
   conflicts,
-  snapshots = [],
+  snapshot = null,
 }: {
   dismissed: boolean;
   pending: boolean;
   onDismiss: () => void;
   state?: MattState;
   conflicts?: readonly ConflictState[];
-  snapshots?: readonly ScanSnapshot[];
+  snapshot?: ScanSnapshot | null;
 }) {
   if (dismissed) return null;
-  const scopedContexts = state?.project && conflicts !== undefined
-    ? [...new Map(conflicts.map((conflict) => [JSON.stringify(conflict.scope), conflict.scope])).values()].map((scope) => {
-        const scoped = conflicts.filter((conflict) => JSON.stringify(conflict.scope) === JSON.stringify(scope));
-        const resolved = state.resolved.map<MattState["resolved"][number]>((skill) => {
-          const conflict = scoped.find((item) => item.canonicalId === skill.canonicalId);
-          const available = conflict && verifiedDelivery(conflict, matchingSnapshot(conflict, snapshots));
-          return {
-            ...skill,
-            active: Boolean(available && conflict.effectiveName),
-            bbName: available ? conflict.effectiveName : null,
-            outcome: available ? conflict.outcome : "unknown",
-            conflict: conflict && available ? conflict : {
-              ...(conflict ?? skill.conflict),
-              reason: "Delivery is unknown until a matching, complete, fresh scan is available.",
-            },
-          };
-        });
-        return { scope, state: { ...state, resolved } };
-      })
-    : null;
-  // Providers that would see the same steps share one list; ids stay out of the copy.
-  const stepGroups: { providers: string[]; state: MattState }[] = [];
-  for (const { scope, state: scopedState } of scopedContexts ?? []) {
-    const key = JSON.stringify(STEP_SKILLS.map((id) => recommendation(scopedState, id)));
-    const group = stepGroups.find((item) => JSON.stringify(STEP_SKILLS.map((id) => recommendation(item.state, id))) === key);
-    if (group) { if (!group.providers.includes(scope.providerId)) group.providers.push(scope.providerId); }
-    else stepGroups.push({ providers: [scope.providerId], state: scopedState });
-  }
+  const scopedState = state?.project && conflicts !== undefined
+    ? { ...state, resolved: state.resolved.map<MattState["resolved"][number]>((skill) => {
+        const conflict = conflicts.find((item) => item.canonicalId === skill.canonicalId);
+        const available = conflict && verifiedDelivery(conflict, snapshot);
+        return {
+          ...skill,
+          active: Boolean(available && conflict.effectiveName),
+          bbName: available ? conflict.effectiveName : null,
+          outcome: available ? conflict.outcome : "unknown",
+          conflict: conflict && available ? conflict : {
+            ...(conflict ?? skill.conflict),
+            reason: "Delivery is unknown until a complete plugin scan is available.",
+          },
+        };
+      }) }
+    : state;
   return (
     <Card className="mt-4 space-y-3 p-4">
       <div className="flex items-start justify-between gap-3">
@@ -143,12 +131,7 @@ export function StartHere({
           <Icon name="X" className="size-3.5" />
         </Button>
       </div>
-      {stepGroups.length <= 1 ? <StartSteps state={stepGroups[0]?.state ?? state} /> : stepGroups.map(({ providers, state: scopedState }) => (
-        <section key={providers.join(",")} aria-label={`Getting started in ${providers.join(" and ")}`} className="space-y-2">
-          <p className="text-xs text-muted-foreground">In {providers.join(" and ")}:</p>
-          <StartSteps state={scopedState} />
-        </section>
-      ))}
+      <StartSteps state={scopedState} />
       <p className="text-sm">
         Engineering and Productivity start on. In-progress is experimental and
         starts off; choose opt-ins below.

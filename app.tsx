@@ -76,7 +76,7 @@ function ScopePage({
   const [included, setIncluded] = useState<string[]>([]);
   const [optIn, setOptIn] = useState<string[] | null>(null);
   const [conflicts, setConflicts] = useState<ConflictState[]>([]);
-  const [snapshots, setSnapshots] = useState<ScanSnapshot[]>([]);
+  const [snapshot, setSnapshot] = useState<ScanSnapshot | null>(null);
   const [conflictError, setConflictError] = useState<string | null>(null);
   const [reviewingClashes, setReviewingClashes] = useState(false);
   const revision = useRef(0);
@@ -86,7 +86,8 @@ function ScopePage({
     if (mounted.current)
       setError(cause instanceof Error ? cause.message : String(cause));
   }, []);
-  const refetch = useCallback(async () => {
+  // Only explicit retries rescan; the backend rescans on startup and plugin changes and publishes them.
+  const refetch = useCallback(async (refresh = false) => {
     const request = ++revision.current;
     try {
       const next = await rpc.call("matt_pocock_state", { scope });
@@ -98,16 +99,16 @@ function ScopePage({
       }
       if (scope.kind === "project") {
         try {
-          const discovery = await conflictRpc.call("matt_pocock_conflicts", { projectId: scope.projectId, refresh: true });
+          const discovery = await conflictRpc.call("matt_pocock_conflicts", { projectId: scope.projectId, refresh });
           if (mounted.current && revision.current === request) {
             setConflicts(discovery.conflicts);
-            setSnapshots(discovery.snapshots);
+            setSnapshot(discovery.snapshot);
             setConflictError(null);
           }
         } catch (cause) {
           if (mounted.current && revision.current === request) {
             setConflictError(cause instanceof Error ? cause.message : String(cause));
-            setSnapshots((current) => current.map((snapshot) => ({ ...snapshot, freshness: "stale" })));
+            setSnapshot((current) => current && { ...current, freshness: "stale" });
           }
         }
       }
@@ -124,12 +125,7 @@ function ScopePage({
       revision.current++;
     };
   }, [refetch]);
-  useRealtime(STATE_CHANGED, refetch);
-  useEffect(() => {
-    if (scope.kind !== "project") return;
-    const timer = setInterval(() => { void refetch(); }, mirrorConfig.conflicts.scanIntervalMs);
-    return () => clearInterval(timer);
-  }, [scope, refetch]);
+  useRealtime(STATE_CHANGED, () => { void refetch(); });
   const connection = useRealtimeConnectionState();
   const previousConnection = useRef(connection);
   useEffect(() => {
@@ -245,10 +241,10 @@ function ScopePage({
     void mutate(() => conflictRpc.call("matt_pocock_resolve", { projectId: scope.projectId, canonicalId, choice }));
   };
   const clashes = state && scope.kind === "project"
-    ? findClashes({ skills: state.catalog.skills, resolved: state.resolved, conflicts, snapshots })
+    ? findClashes({ skills: state.catalog.skills, resolved: state.resolved, conflicts, snapshot })
     : [];
   const checkFailed = scope.kind === "project" && state?.project !== null && state?.project !== undefined &&
-    (conflictError !== null || snapshots.some((snapshot) => snapshot.errors.length > 0));
+    (conflictError !== null || (snapshot?.errors.length ?? 0) > 0);
 
   return (
     <>
@@ -261,7 +257,7 @@ function ScopePage({
         <StartHere
           state={state}
           conflicts={conflicts}
-          snapshots={snapshots}
+          snapshot={snapshot}
           dismissed={state.startHereDismissed}
           pending={pending}
           onDismiss={() => {
@@ -329,7 +325,7 @@ function ScopePage({
       </Card>
       {state && scope.kind === "project" && (
         <ConflictNotice clashes={clashes} checkFailed={checkFailed} pending={pending}
-          onReview={() => setReviewingClashes(true)} onRetry={() => { void refetch(); }} />
+          onReview={() => setReviewingClashes(true)} onRetry={() => { void refetch(true); }} />
       )}
       {(error || loadError) && (
         <div
@@ -481,7 +477,7 @@ function ScopePage({
                           resolved={item}
                           state={state}
                           conflicts={scope.kind === "project" ? conflicts.filter((conflict) => conflict.canonicalId === skill.canonicalId) : []}
-                          snapshots={snapshots}
+                          snapshot={snapshot}
                           isNew={state.newSkillIds?.includes(skill.canonicalId)}
                           clash={clashes.find((clash) => clash.canonicalId === skill.canonicalId)}
                           onReviewClash={() => setReviewingClashes(true)}

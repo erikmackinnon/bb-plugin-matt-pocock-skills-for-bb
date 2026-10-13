@@ -12,12 +12,8 @@ import type { CatalogSkill } from "../../shared/catalog";
 import type { ConflictChoice, ConflictSource, ConflictState, ScanSnapshot } from "../../shared/conflicts";
 import type { ResolvedSkill } from "./model";
 
-export function matchingSnapshot(conflict: ConflictState, snapshots: readonly ScanSnapshot[]): ScanSnapshot | undefined {
-  return snapshots.find((snapshot) => JSON.stringify(snapshot.scope) === JSON.stringify(conflict.scope));
-}
-
-export function verifiedDelivery(conflict: ConflictState, snapshot?: ScanSnapshot): boolean {
-  return snapshot !== undefined && JSON.stringify(snapshot.scope) === JSON.stringify(conflict.scope) &&
+export function verifiedDelivery(conflict: ConflictState, snapshot?: ScanSnapshot | null): boolean {
+  return snapshot !== undefined && snapshot !== null &&
     snapshot.complete && snapshot.freshness !== "invalidated" && snapshot.generation === conflict.snapshotGeneration &&
     !snapshot.affectedUnknownNames.includes(conflict.canonicalId) &&
     (!conflict.effectiveName || !snapshot.affectedUnknownNames.includes(conflict.effectiveName));
@@ -25,23 +21,8 @@ export function verifiedDelivery(conflict: ConflictState, snapshot?: ScanSnapsho
 
 /** Who else provides a skill with the same name, in words a user recognises. */
 export function ownerLabel(source: ConflictSource): string {
-  switch (source.scope) {
-    case "bb-plugin":
-    case "native-plugin":
-      return source.pluginId ? `the ${source.pluginId} plugin` : "another plugin";
-    case "bb-user":
-    case "shared-user":
-    case "provider-user":
-      return "your own skills";
-    case "project":
-    case "shared-project":
-    case "provider-project":
-      return "this project's skills";
-    case "inherited":
-      return "bb's built-in skills";
-    case "command":
-      return `a /${source.name} command`;
-  }
+  if (source.scope === "bb-user") return "your own skills";
+  return source.pluginId ? `the ${source.pluginId} plugin` : "another plugin";
 }
 
 const competing = (conflict: ConflictState) => conflict.sources.filter((source) =>
@@ -61,8 +42,8 @@ export type Clash = {
   mattBlocked: string | null;
 };
 
-function mattBlockedReason(conflict: ConflictState, snapshot: ScanSnapshot | undefined, aliasName: string): string | null {
-  const unsupported = competing(conflict).find((source) => source.scope !== "bb-plugin" ||
+function mattBlockedReason(conflict: ConflictState, snapshot: ScanSnapshot | null, aliasName: string): string | null {
+  const unsupported = competing(conflict).find((source) =>
     !source.pluginId || source.pluginId.localeCompare(mirrorConfig.identity.pluginId) <= 0);
   if (unsupported) return `Matt's can't replace ${ownerLabel(unsupported)}. Turn that one off where it lives, or keep both to use Matt's as /${aliasName}.`;
   if (!verifiedDelivery(conflict, snapshot) || conflict.oursBlockedReason !== null) {
@@ -71,33 +52,30 @@ function mattBlockedReason(conflict: ConflictState, snapshot: ScanSnapshot | und
   return null;
 }
 
-/**
- * Skills the user wants that share a name with a skill they already have. Collapses every
- * provider, environment and host into one entry per skill; empty when nothing clashes.
- */
+/** Skills the user wants that share a name with another plugin's skill; empty when nothing clashes. */
 export function findClashes(input: {
   skills: readonly CatalogSkill[];
   resolved: readonly ResolvedSkill[];
   conflicts: readonly ConflictState[];
-  snapshots: readonly ScanSnapshot[];
+  snapshot: ScanSnapshot | null;
 }): Clash[] {
   const clashes: Clash[] = [];
   for (const skill of input.skills) {
     const wanted = input.resolved.find((item) => item.canonicalId === skill.canonicalId);
     if (!wanted || !(wanted.chosen || wanted.active) || wanted.reason === "off-master") continue;
     const scoped = input.conflicts.filter((conflict) => conflict.canonicalId === skill.canonicalId &&
-      conflict.internalDependencyFor.length === 0 && matchingSnapshot(conflict, input.snapshots));
+      conflict.internalDependencyFor.length === 0 && input.snapshot !== null);
     const clashing = scoped.filter((conflict) => competing(conflict).length > 0);
     if (clashing.length === 0) continue;
     const owners = [...new Set(clashing.flatMap((conflict) => competing(conflict).map(ownerLabel)))];
-    const verified = clashing.filter((conflict) => verifiedDelivery(conflict, matchingSnapshot(conflict, input.snapshots)));
+    const verified = clashing.filter((conflict) => verifiedDelivery(conflict, input.snapshot));
     const outcomes = new Set(verified.map((conflict) => conflict.outcome));
     const current: ClashCurrent = verified.length === 0 ? "checking"
       : outcomes.has("canonical-selected") ? "matt"
         : outcomes.has("alias-selected") ? "both"
           : outcomes.has("yielded") || outcomes.has("blocked") ? "yours" : "checking";
     const mattBlocked = clashing.map((conflict) =>
-      mattBlockedReason(conflict, matchingSnapshot(conflict, input.snapshots), skill.aliasName)).find((reason) => reason !== null) ?? null;
+      mattBlockedReason(conflict, input.snapshot, skill.aliasName)).find((reason) => reason !== null) ?? null;
     clashes.push({
       canonicalId: skill.canonicalId, aliasName: skill.aliasName, owners,
       requestedChoice: clashing[0].requestedChoice, current, mattBlocked,

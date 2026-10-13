@@ -38,7 +38,7 @@ A skill can require other skills. Those stay on while a selected skill needs the
 
 ### Skills with the same name
 
-If one of Matt's skills has the same name as a skill you already have (your own, a project's, or another plugin's), yours keeps the name and the page says so. Choose **Keep both** to also get Matt's under `/matt-pocock-<name>`, or **Use Matt's** where bb allows it. Nothing is shown when there are no clashes.
+If one of Matt's skills has the same name as another plugin's skill or one of your bb skills, theirs keeps the name and the page says so. Choose **Keep both** to also get Matt's under `/matt-pocock-<name>`, or **Use Matt's** where bb allows it. Skills in a project's `.bb/skills` folder also win over Matt's but aren't flagged; provider-native skills (for example in `~/.claude/skills`) load alongside Matt's, so give yours a different name or choose **Keep both** to call Matt's unambiguously. Nothing is shown when there are no clashes.
 
 ### Command line
 

@@ -6,7 +6,7 @@ import { differsFromGlobal, keptOnText, secondaryName } from "./model";
 import type { MattState, ResolvedSkill } from "./model";
 import type { CatalogSkill } from "../../shared/catalog";
 import type { ConflictState, ScanSnapshot } from "../../shared/conflicts";
-import { ClashLine, matchingSnapshot, verifiedDelivery, type Clash } from "./conflict-details";
+import { ClashLine, verifiedDelivery, type Clash } from "./conflict-details";
 
 export function SkillRow({
   skill,
@@ -16,7 +16,7 @@ export function SkillRow({
   onToggle,
   onReset,
   conflicts = [],
-  snapshots = [],
+  snapshot = null,
   clash,
   onReviewClash,
   conflictDisabled = disabled,
@@ -30,7 +30,7 @@ export function SkillRow({
   onToggle: (enabled: boolean) => void;
   onReset: () => void;
   conflicts?: ConflictState[];
-  snapshots?: ScanSnapshot[];
+  snapshot?: ScanSnapshot | null;
   clash?: Clash;
   onReviewClash?: () => void;
   conflictDisabled?: boolean;
@@ -55,7 +55,7 @@ export function SkillRow({
   const required = resolved.reason === "on-required";
   const displayName = secondaryName(skill);
   const effective = state.project !== null
-    ? conflicts.find((conflict) => verifiedDelivery(conflict, matchingSnapshot(conflict, snapshots)))?.effectiveName
+    ? conflicts.find((conflict) => verifiedDelivery(conflict, snapshot))?.effectiveName
     : resolved.bbName;
   const name = effective ? `/${effective}` : state.project === null ? `/${skill.canonicalId}` : skill.canonicalId;
   const keptDescriptionId = useId();

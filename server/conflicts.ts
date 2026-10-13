@@ -1,149 +1,87 @@
-import { readdir, readFile, mkdtemp, mkdir, writeFile, symlink } from "node:fs/promises";
+import { mkdtemp, mkdir, readdir, readFile, writeFile, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import { execFile } from "node:child_process";
-import { promisify, isDeepStrictEqual } from "node:util";
+import { promisify } from "node:util";
 import { parse } from "yaml";
 import { z } from "zod";
 import { mirrorConfig } from "../mirror.config.ts";
 import type { BbPluginApi } from "@get-bb/plugin-sdk";
 import { bbNameSchema, type Catalog } from "../shared/catalog.ts";
-import { scopeKey, type ConflictSource, type ScanScope, type ScanSnapshot, type ProviderProbe } from "../shared/conflicts.ts";
+import type { ConflictSource, ScanSnapshot, ProviderProbe } from "../shared/conflicts.ts";
 import type { ProjectState, ResolvedSkill } from "../shared/state.ts";
 import type { SkillSelection } from "./resolve.ts";
 
 export const pluginId = "matt-pocock-skills-for-bb";
-export interface SourceRoot {
-  path: string;
-  scope: ConflictSource["scope"];
-  providerId: string | null;
-  pluginId?: string;
-  active?: boolean;
-  recursive?: boolean;
-}
 export interface Discovery {
   sources: ConflictSource[];
   errors: string[];
   affectedUnknownNames: string[];
 }
-export type Discover = (scope: ScanScope) => Promise<Discovery>;
-const source = (name: string, tier: ConflictSource["scope"], path: string | null,
-  providerId: string | null = null, owner: string | null = null, active = true): ConflictSource => ({
-  name, scope: tier, path, providerId, pluginId: owner, version: null, active,
-  selection: "unknown", evidence: ["Advertised source; session selection is not published"],
-});
+export type Discover = () => Promise<Discovery>;
 
-export async function scanRoots(roots: readonly SourceRoot[], names: readonly string[]): Promise<Discovery> {
-  const result: Discovery = { sources: [], errors: [], affectedUnknownNames: [] };
-  for (const root of roots) {
-    const visited = new Set<string>();
-    async function visit(path: string) {
-      if (visited.has(path)) return;
-      visited.add(path);
-      let entries;
-      try { entries = await readdir(path, { withFileTypes: true }); }
-      catch (error) {
-        if (error instanceof Error && "code" in error && error.code === "ENOENT") return;
-        result.errors.push(`Cannot scan ${path}: ${String(error)}`);
-        result.affectedUnknownNames.push(...names);
-        return;
-      }
-      if (entries.some(entry => entry.name === "SKILL.md")) {
-        try {
-          const text = await readFile(join(path, "SKILL.md"), "utf8");
-          const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
-          const metadata = z.object({ name: bbNameSchema }).parse(match ? parse(match[1]) : null);
-          result.sources.push(source(metadata.name, root.scope, join(path, "SKILL.md"), root.providerId,
-            root.pluginId ?? null, root.active ?? true));
-        } catch (error) {
-          result.errors.push(`Cannot read skill ${path}: ${String(error)}`);
-          result.affectedUnknownNames.push(...names);
-        }
-        return;
-      }
-      for (const entry of entries) if (entry.isDirectory()) {
-        if (root.recursive || path === root.path) await visit(join(path, entry.name));
-      }
-    }
-    await visit(root.path);
-  }
-  return result;
-}
-
-// These roots are for fixture/host adapters. Server discovery uses the host-aware SDK list.
-export function nativeRoots(input: { providerId: string; home: string; cwd: string;
-  env?: Record<string, string | undefined>; declared?: readonly SourceRoot[] }): SourceRoot[] {
-  const { providerId, home, cwd, env = {} } = input;
-  if (input.declared) return [...input.declared];
-  const user = providerId === "claude-code" ? [join(env.CLAUDE_CONFIG_DIR ?? join(home, ".claude"), "skills")]
-    : providerId === "codex" ? [join(env.CODEX_HOME ?? join(home, ".codex"), "skills"), join(home, ".agents/skills")]
-    : providerId === "pi" ? [join(env.PI_CODING_AGENT_DIR ?? join(home, ".pi/agent"), "skills"), join(home, ".agents/skills")]
-    : [];
-  const relative = providerId === "claude-code" ? [".claude/skills"]
-    : providerId === "codex" ? [".codex/skills", ".agents/skills"]
-    : providerId === "pi" ? [".pi/skills", ".agents/skills"] : [];
-  const roots: SourceRoot[] = user.map(path => ({ path, scope: "provider-user", providerId, recursive: true }));
-  for (let current = resolve(cwd); ; current = dirname(current)) {
-    roots.push(...relative.map(path => ({ path: join(current, path), scope: "provider-project" as const, providerId, recursive: true })));
-    if (dirname(current) === current) break;
-  }
-  return roots;
-}
-
+// bb itself removes a Matt skill in two global cases: another plugin's same-name skill (bb drops
+// both) and a bb user skill (it overrides plugin skills). Both are read once per scan, never per
+// project, environment, or provider. Project .bb/skills and provider-native skills are not
+// detected: the first is per workspace, and providers keep native copies alongside bb's.
+// See compat/AUDIT.md.
 const pluginsSchema = z.object({ plugins: z.array(z.object({ id: z.string(), enabled: z.boolean(), rootDir: z.string(),
   version: z.string().nullable(), capabilities: z.array(z.object({ kind: z.string(), id: z.string() })) })) });
-const skillsSchema = z.object({ skills: z.array(z.object({ name: z.string(), filePath: z.string(),
-  pluginId: z.string().nullable(), provider: z.string().nullable(), scope: z.string() })) });
-const commandsSchema = z.object({ commands: z.array(z.object({ name: z.string(), source: z.string() })) });
-const tiers: Record<string, ConflictSource["scope"]> = {
-  "bb-user": "bb-user", "bb-project": "project", "bb-builtin": "inherited", plugin: "bb-plugin",
-  "shared-user": "shared-user", "shared-project": "shared-project",
-  "provider-user": "provider-user", "provider-project": "provider-project",
-};
-export function sdkDiscovery(bb: BbPluginApi, names: readonly string[]): Discover {
-  return async scope => {
+export function bbSkillDiscovery(bb: BbPluginApi, names: readonly string[], warn: (message: string) => void = () => {}): Discover {
+  return async () => {
     const result: Discovery = { sources: [], errors: [], affectedUnknownNames: [] };
-    const [plugins, skills, commands] = await Promise.allSettled([
-      Promise.resolve().then(() => bb.sdk.plugins.list()).then(value => pluginsSchema.parse(value).plugins),
-      Promise.resolve().then(() => bb.sdk.skills.list({ projectId: scope.projectId, environmentId: scope.environmentId })).then(value => skillsSchema.parse(value)),
-      Promise.resolve().then(() => bb.sdk.projects.commands({ projectId: scope.projectId, environmentId: scope.environmentId, provider: scope.providerId }))
-        .then(value => commandsSchema.parse(value)),
-    ]);
-    for (const entry of [plugins, skills, commands]) if (entry.status === "rejected") {
-      result.errors.push(String(entry.reason)); result.affectedUnknownNames.push(...names);
-    }
-    if (plugins.status === "fulfilled") for (const plugin of plugins.value) {
+    let plugins;
+    try { plugins = pluginsSchema.parse(await bb.sdk.plugins.list()).plugins; }
+    catch (error) { return { sources: [], errors: [String(error)], affectedUnknownNames: [...names] }; }
+    for (const plugin of plugins) {
       if (plugin.id === pluginId) continue;
       for (const capability of plugin.capabilities) if (capability.kind === "skill" && bbNameSchema.safeParse(capability.id).success) {
-        result.sources.push({ ...source(capability.id, "bb-plugin", plugin.rootDir, null, plugin.id, plugin.enabled), version: plugin.version });
+        result.sources.push({ name: capability.id, scope: "bb-plugin", path: plugin.rootDir, providerId: null, pluginId: plugin.id,
+          version: plugin.version, active: plugin.enabled, selection: "unknown", evidence: ["Advertised plugin skill; session selection is not published"] });
       }
     }
-    if (skills.status === "fulfilled") for (const skill of skills.value.skills) {
-      if (skill.pluginId === pluginId || !bbNameSchema.safeParse(skill.name).success) continue;
-      const tier = tiers[skill.scope];
-      if (!tier) { result.affectedUnknownNames.push(...names); result.errors.push(`Unknown source tier ${skill.scope}`); continue; }
-      const owner = plugins.status === "fulfilled" ? plugins.value.find(plugin => plugin.id === skill.pluginId) : undefined;
-      result.sources.push(source(skill.name, skill.pluginId && tier.startsWith("provider-") ? "native-plugin" : tier,
-        skill.filePath, skill.provider, skill.pluginId, owner?.enabled ?? true));
-      if (tier.startsWith("provider-") && skill.provider === null) result.affectedUnknownNames.push(skill.name);
-    }
-    if (commands.status === "fulfilled") for (const command of commands.value.commands) {
-      if (command.source === "command" && bbNameSchema.safeParse(command.name).success)
-        result.sources.push({ ...source(command.name, "command", null, scope.providerId), evidence: ["Invocation ambiguity; command remains available"] });
-    }
+    let dataDir: string | undefined;
+    try { dataDir = bb.server.experimental_dataDir; } catch { dataDir = undefined; }
+    // An older bb without the API still gets plugin detection rather than holding every skill back.
+    if (!dataDir) { warn("bb does not expose its data directory; bb user skills are not checked for same-name clashes"); return result; }
+    const user = await userSkills(join(dataDir, "skills"));
+    if ("error" in user) return { ...result, errors: [user.error], affectedUnknownNames: [...names] };
+    result.sources.push(...user.sources);
     return result;
   };
 }
 
-export function resolveConflictChoices(input: { catalog: Catalog; selections: readonly SkillSelection[]; project: ProjectState;
+/** One level of <dataDir>/skills/<folder>/SKILL.md; the frontmatter name wins over the folder name. */
+export async function userSkills(root: string): Promise<{ sources: ConflictSource[] } | { error: string }> {
+  let entries;
+  try { entries = await readdir(root, { withFileTypes: true }); }
+  catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { sources: [] };
+    return { error: `Cannot read bb user skills at ${root}: ${String(error)}` };
+  }
+  const sources: ConflictSource[] = [];
+  for (const entry of entries) if (!entry.name.startsWith(".") && (entry.isDirectory() || entry.isSymbolicLink())) {
+    const path = join(root, entry.name, "SKILL.md");
+    let text;
+    try { text = await readFile(path, "utf8"); } catch { continue; }
+    let declared: unknown;
+    try { declared = parse(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text)?.[1] ?? "")?.name; } catch { declared = undefined; }
+    const name = [declared, entry.name].find(value => bbNameSchema.safeParse(value).success) as string | undefined;
+    if (name) sources.push({ name, scope: "bb-user", path, providerId: null, pluginId: null, version: null, active: true,
+      selection: "unknown", evidence: ["bb user skill; it overrides plugin skills with the same name"] });
+  }
+  return { sources };
+}
+
+export function resolveConflictChoices(input: { catalog: Catalog; selections: readonly SkillSelection[]; projectId: string; project: ProjectState;
   snapshot: ScanSnapshot; bbVersion: string; probes: readonly ProviderProbe[] }) {
-  const { catalog, selections, project, snapshot, bbVersion, probes } = input;
-  const applicable = snapshot.sources.filter(item => item.pluginId !== pluginId && item.active && item.selection !== "omitted" &&
-    (item.providerId === null || item.providerId === snapshot.scope.providerId));
+  const { catalog, selections, projectId, project, snapshot, bbVersion, probes } = input;
+  const applicable = snapshot.sources.filter(item => item.pluginId !== pluginId && item.active && item.selection !== "omitted");
   const unknown = (canonical: string, alias: string) => snapshot.freshness === "invalidated" ||
     (!snapshot.complete && (snapshot.affectedUnknownNames.length === 0 || snapshot.affectedUnknownNames.includes(canonical) || snapshot.affectedUnknownNames.includes(alias)));
+  // Plugin ordering is bb's own resolver, so a passing probe on any provider covers this bb version.
   const orderingPassed = bbVersion !== "unknown" && probes.some(probe => probe.requirement === "CMP-204" && probe.status === "passed" &&
-    probe.bbVersion === bbVersion && probe.providerId === snapshot.scope.providerId);
+    probe.bbVersion === bbVersion);
   const definitions = new Map(catalog.skills.map(skill => [skill.canonicalId, skill]));
   const rows: ResolvedSkill[] = selections.map(selection => {
     const definition = definitions.get(selection.canonicalId);
@@ -170,26 +108,26 @@ export function resolveConflictChoices(input: { catalog: Catalog; selections: re
         name = aliasTaken ? null : definition.aliasName;
         reason = aliasTaken ? "The Matt alias is taken" : "Free alias selected; the canonical source remains available";
       } else if (choice === "ours" && (!orderingPassed || conflicts.some(item => item.scope !== "bb-plugin" || !item.pluginId || item.pluginId.localeCompare(pluginId) <= 0))) {
-        outcome = "blocked"; reason = !orderingPassed ? `CMP-204 ordering has not passed for bb ${bbVersion} and ${snapshot.scope.providerId}`
+        outcome = "blocked"; reason = !orderingPassed ? `CMP-204 ordering has not passed for bb ${bbVersion}`
           : "Keep Matt's canonical is unavailable with this source. Use its plugin settings or move your skill yourself";
       } else if (choice === "unresolved" && conflicts.length > 0) reason = "Same-name sources require a project choice; Matt yields by default";
       else { outcome = "canonical-selected"; name = definition.canonicalId; reason = "Canonical selected from a complete scope"; }
     }
     return { ...selection, active: name !== null, bbName: name, outcome,
       reason: selection.active && name === null ? outcome === "unknown" ? "off-scan" : "off-conflict" : selection.reason,
-      conflict: { scope: snapshot.scope, canonicalId: selection.canonicalId, requestedChoice: choice, outcome,
-        effectiveName: name, reason, sources: snapshot.sources.filter(item => item.pluginId !== pluginId && (item.providerId === null || item.providerId === snapshot.scope.providerId) &&
+      conflict: { projectId, canonicalId: selection.canonicalId, requestedChoice: choice, outcome,
+        effectiveName: name, reason, sources: snapshot.sources.filter(item => item.pluginId !== pluginId &&
           (item.name === definition.canonicalId || item.name === definition.aliasName)),
         snapshotGeneration: snapshot.generation, internalDependencyFor: [], ...(oursBlockedReason === undefined ? {} : { oursBlockedReason }) } };
   });
   return rows;
 }
 
-export function resolveConflicts(input: Parameters<typeof resolveConflictChoices>[0]) {
-  const { catalog, selections, snapshot } = input;
+/** `providerId` only shapes the addendum: ACP agents get an advisory user-only note. */
+export function resolveConflicts(input: Parameters<typeof resolveConflictChoices>[0] & { providerId?: string }) {
+  const { catalog, selections, snapshot, providerId } = input;
   const rows = resolveConflictChoices(input);
-  const applicable = snapshot.sources.filter(item => item.pluginId !== pluginId && item.active && item.selection !== "omitted" &&
-    (item.providerId === null || item.providerId === snapshot.scope.providerId));
+  const applicable = snapshot.sources.filter(item => item.pluginId !== pluginId && item.active && item.selection !== "omitted");
   const unknown = (canonical: string, alias: string) => snapshot.freshness === "invalidated" ||
     (!snapshot.complete && (snapshot.affectedUnknownNames.length === 0 || snapshot.affectedUnknownNames.includes(canonical) || snapshot.affectedUnknownNames.includes(alias)));
   const definitions = new Map(catalog.skills.map(skill => [skill.canonicalId, skill]));
@@ -246,147 +184,101 @@ export function resolveConflicts(input: Parameters<typeof resolveConflictChoices
   }
   const yielded = rows.filter(row => !row.active).map(row => row.canonicalId);
   if (yielded.length) lines.push(`Unavailable Matt routes: ${yielded.join(", ")}. ask-matt skips these routes and recommends effective alias invocations.`);
-  if (snapshot.scope.providerId.startsWith("acp-")) {
+  if (providerId?.startsWith("acp-")) {
     const userOnly = rows.filter(row => row.active && definitions.get(row.canonicalId)?.userInvoked).map(row => row.bbName);
     if (userOnly.length) lines.push(`Advisory user-only intent (ACP does not enforce it): ${userOnly.join(", ")}. Load only on explicit user request or an explicit Matt workflow call.`);
   }
   return { snapshot, resolved: rows, addendum: lines.join("\n") };
 }
 
-export class ConflictScanner {
-  private snapshots = new Map<string, ScanSnapshot>();
-  private pending = new Map<string, Promise<ScanSnapshot>>();
-  private scopes = new Map<string, ScanScope>();
-  private revisions = new Map<string, number>();
-  private lastComplete = new Map<string, ScanSnapshot>();
-  private retries = new Map<string, { attempt: number; timer: ReturnType<typeof setTimeout> }>();
+/**
+ * The one plugin scan every project and provider shares. A failed rescan keeps delivering the last
+ * complete scan, adding any clashes it did see, so new threads keep their skills.
+ */
+export class PluginScan {
+  private current: ScanSnapshot | undefined;
+  private lastComplete: ScanSnapshot | undefined;
+  private pending: Promise<ScanSnapshot | undefined> | null = null;
+  private again = false;
+  /** Bumped by invalidate(); a scan that started before the bump is obsolete. */
+  private revision = 0;
+  private retry: { attempt: number; timer: ReturnType<typeof setTimeout> | null } = { attempt: 0, timer: null };
   private stopped = false;
   private generation = 0;
   private discover: Discover;
   private names: readonly string[];
-  private freshnessMs: number;
-  private committed: (scope: ScanScope, changed: boolean) => void;
-  private retry: { baseMs: number; maxMs: number };
-  constructor(discover: Discover, names: readonly string[], committed: (scope: ScanScope, changed: boolean) => void,
-    freshnessMs: number = mirrorConfig.conflicts.freshnessMs, retry: { baseMs: number; maxMs: number } = mirrorConfig.conflicts.retryMs) {
-    this.discover = discover; this.names = names; this.committed = committed; this.freshnessMs = freshnessMs; this.retry = retry;
+  private committed: (snapshot: ScanSnapshot) => void;
+  private retryMs: { baseMs: number; maxMs: number };
+  /**
+   * `committed` runs for every committed scan. Each follows a stale or invalidated one, so even
+   * identical sources can change delivery (for example, stale saved "ours" falls back to its alias).
+   */
+  constructor(discover: Discover, names: readonly string[], committed: (snapshot: ScanSnapshot) => void,
+    retryMs: { baseMs: number; maxMs: number } = mirrorConfig.conflicts.retryMs) {
+    this.discover = discover; this.names = names; this.committed = committed; this.retryMs = retryMs;
   }
-  peek(scope: ScanScope): ScanSnapshot | undefined {
-    const key = scopeKey(scope);
-    const snapshot = this.snapshots.get(key);
-    const held = this.lastComplete.get(key);
+  /** The snapshot delivery should use, or undefined before any scan. */
+  read(): ScanSnapshot | undefined {
+    const snapshot = this.current, held = this.lastComplete;
     if (!snapshot || !held || (snapshot.complete && snapshot.freshness !== "invalidated")) return snapshot ? structuredClone(snapshot) : undefined;
-    // While rediscovery is pending or failing, the last complete scan stays deliverable. Clashes seen since then still yield.
-    const sources = [...held.sources, ...snapshot.sources.filter(item => !held.sources.some(known => isDeepStrictEqual(known, item)))];
+    const heldKeys = new Set(held.sources.map(item => JSON.stringify(item)));
+    const sources = [...held.sources, ...snapshot.sources.filter(item => !heldKeys.has(JSON.stringify(item)))];
     return structuredClone({ ...snapshot, freshness: "stale", complete: true, affectedUnknownNames: [], sources });
   }
-  read(scope: ScanScope): ScanSnapshot | undefined {
-    if (this.stopped) return undefined;
-    this.scopes.set(scopeKey(scope), structuredClone(scope));
-    if (!this.snapshots.has(scopeKey(scope)) && !this.stopped) void this.refresh(scope);
-    const key = scopeKey(scope);
-    const snapshot = this.snapshots.get(key);
-    if (snapshot && snapshot.freshness === "fresh" && Date.now() - Date.parse(snapshot.scannedAt) >= this.freshnessMs) {
-      this.snapshots.set(key, { ...snapshot, freshness: "stale" });
-      if (!this.stopped) void this.refresh(scope);
-    }
-    return this.peek(scope);
-  }
-  known(projectId?: string): ScanScope[] { return [...this.scopes.values()].filter(scope => projectId === undefined || scope.projectId === projectId); }
-  async refresh(scope: ScanScope): Promise<ScanSnapshot> {
-    const key = scopeKey(scope);
-    this.scopes.set(key, structuredClone(scope));
-    const pending = this.pending.get(key);
-    if (pending) return pending;
-    const previous = this.snapshots.get(key);
-    if (previous?.freshness === "fresh") this.snapshots.set(key, { ...previous, freshness: "stale" });
-    const revision = this.revisions.get(key) ?? 0;
-    const operation = Promise.resolve().then(() => this.discover(scope)).catch(error => ({
+  /** Rescans now. A request during a scan reruns once, after it. */
+  refresh(): Promise<ScanSnapshot | undefined> {
+    if (this.pending) { this.again = true; return this.pending; }
+    if (this.current?.freshness === "fresh") this.current = { ...this.current, freshness: "stale" };
+    const revision = this.revision;
+    this.pending = Promise.resolve().then(() => this.discover()).catch(error => ({
       sources: [], errors: [String(error)], affectedUnknownNames: [...this.names],
     })).then(discovery => {
-      const snapshot: ScanSnapshot = { scope: structuredClone(scope), generation: ++this.generation,
-        scannedAt: new Date().toISOString(), freshness: "fresh", complete: discovery.errors.length === 0 && discovery.affectedUnknownNames.length === 0,
+      // Plugins changed mid-scan: drop this result; the queued rerun replaces it.
+      if (this.stopped || revision !== this.revision) return this.read();
+      const snapshot: ScanSnapshot = { generation: ++this.generation, scannedAt: new Date().toISOString(), freshness: "fresh",
+        complete: discovery.errors.length === 0 && discovery.affectedUnknownNames.length === 0,
         affectedUnknownNames: [...new Set(discovery.affectedUnknownNames)], sources: structuredClone(discovery.sources), errors: [...discovery.errors] };
-      if (!this.stopped && revision === (this.revisions.get(key) ?? 0)) {
-        const previous = this.snapshots.get(key);
-        const evidence = (value: ScanSnapshot) => [value.sources, value.complete, value.affectedUnknownNames, value.errors];
-        const changed = !previous || !isDeepStrictEqual(evidence(previous), evidence(snapshot));
-        this.snapshots.set(key, snapshot);
-        if (snapshot.complete) this.lastComplete.set(key, snapshot);
-        this.scheduleRetry(scope, discovery.errors.length > 0);
-        this.committed(scope, changed);
-      }
+      this.current = snapshot;
+      if (snapshot.complete) this.lastComplete = snapshot;
+      this.scheduleRetry(!snapshot.complete);
+      this.committed(structuredClone(snapshot));
       return structuredClone(snapshot);
     }).finally(() => {
-      this.pending.delete(key);
-      if (!this.stopped && this.scopes.has(key) && revision !== (this.revisions.get(key) ?? 0)) void this.refresh(scope);
+      this.pending = null;
+      if (this.again && !this.stopped) { this.again = false; void this.refresh(); }
     });
-    this.pending.set(key, operation);
-    return operation;
+    return this.pending;
   }
-  private scheduleRetry(scope: ScanScope, failed: boolean) {
-    const key = scopeKey(scope);
-    const previous = this.retries.get(key);
-    if (previous) clearTimeout(previous.timer);
-    if (!failed) { this.retries.delete(key); return; }
-    const attempt = previous?.attempt ?? 0;
-    const timer = setTimeout(() => { if (!this.stopped && this.scopes.has(key)) void this.refresh(scope); },
-      Math.min(this.retry.baseMs * 2 ** attempt, this.retry.maxMs));
+  /** Marks the scan out of date, then rescans. */
+  invalidate() {
+    this.revision++;
+    if (this.current) this.current = { ...this.current, freshness: "invalidated" };
+    void this.refresh();
+  }
+  private scheduleRetry(failed: boolean) {
+    if (this.retry.timer) clearTimeout(this.retry.timer);
+    if (!failed) { this.retry = { attempt: 0, timer: null }; return; }
+    const attempt = this.retry.attempt;
+    const timer = setTimeout(() => { if (!this.stopped) void this.refresh(); }, Math.min(this.retryMs.baseMs * 2 ** attempt, this.retryMs.maxMs));
     timer.unref?.();
-    this.retries.set(key, { attempt: attempt + 1, timer });
+    this.retry = { attempt: attempt + 1, timer };
   }
-  private forget(key: string) {
-    const retry = this.retries.get(key);
-    if (retry) clearTimeout(retry.timer);
-    this.retries.delete(key); this.lastComplete.delete(key);
-  }
-  seedGeneration(generation: number) { this.generation = Math.max(this.generation, generation); }
   restore(snapshot: ScanSnapshot) {
     if (this.stopped) return;
-    const key = scopeKey(snapshot.scope);
-    this.scopes.set(key, structuredClone(snapshot.scope));
-    this.snapshots.set(key, { ...structuredClone(snapshot), freshness: snapshot.freshness === "invalidated" ? "invalidated" : "stale" });
-    if (snapshot.complete) this.lastComplete.set(key, { ...structuredClone(snapshot), freshness: "stale" });
+    this.current = { ...structuredClone(snapshot), freshness: "stale" };
+    if (snapshot.complete) this.lastComplete = this.current;
     this.generation = Math.max(this.generation, snapshot.generation);
-  }
-  retain(projectId: string, applicable: ReadonlySet<string>) {
-    for (const scope of this.known(projectId)) {
-      const key = scopeKey(scope);
-      if (applicable.has(key)) continue;
-      this.revisions.set(key, (this.revisions.get(key) ?? 0) + 1);
-      this.snapshots.delete(key); this.scopes.delete(key); this.forget(key);
-    }
-  }
-  invalidate() {
-    for (const scope of this.known()) {
-      const key = scopeKey(scope);
-      this.revisions.set(key, (this.revisions.get(key) ?? 0) + 1);
-      const snapshot = this.snapshots.get(key);
-      if (snapshot) this.snapshots.set(key, { ...snapshot, freshness: "invalidated" });
-      void this.refresh(scope);
-    }
   }
   dispose() {
     this.stopped = true;
-    for (const key of [...this.retries.keys()]) this.forget(key);
-    this.snapshots.clear(); this.scopes.clear(); this.lastComplete.clear();
+    if (this.retry.timer) clearTimeout(this.retry.timer);
+    this.current = undefined; this.lastComplete = undefined;
   }
 }
 
 export async function installedBbVersion(): Promise<string> {
   try { return (await promisify(execFile)("bb", ["--version"], { timeout: 5000 })).stdout.trim().replace(/^bb\s+/, ""); }
   catch { return "unknown"; }
-}
-
-export async function applicableScopes(bb: BbPluginApi, projectId: string): Promise<ScanScope[]> {
-  const environments = await bb.sdk.environments.list({ projectId });
-  const scopes: ScanScope[] = [];
-  for (const environment of environments) {
-    if (!environment.hostId) continue;
-    const providers = await bb.sdk.providers.list({ environmentId: environment.id });
-    scopes.push(...providers.map(provider => ({ projectId, environmentId: environment.id, hostId: environment.hostId, providerId: provider.id })));
-  }
-  return scopes;
 }
 
 export async function createProviderProbeFixture() {
