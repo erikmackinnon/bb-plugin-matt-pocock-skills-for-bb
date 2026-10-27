@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-matt-pocock-skills-for-bb",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Matt Pocock's engineering and productivity skills for bb, with experimental skills available by opt-in. Synced daily from mattpocock/skills.",
   "license": "MIT",

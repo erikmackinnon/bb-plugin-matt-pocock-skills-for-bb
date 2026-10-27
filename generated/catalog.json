@@ -1167,11 +1167,6 @@
               "line": 29,
               "path": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
               "text": "- Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all."
-            },
-            {
-              "line": 51,
-              "path": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-              "text": "**Section B: Triage label vocabulary.** Skip this section entirely if the `triage` skill isn't installed (exploration told you), since an uninstalled skill needs no labels."
             }
           ],
           "kind": "presence-check"
@@ -1179,11 +1174,6 @@
         {
           "canonicalId": "triage",
           "evidence": [
-            {
-              "line": 19,
-              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
-              "text": "**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_"
-            },
             {
               "line": 19,
               "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
@@ -1195,11 +1185,6 @@
         {
           "canonicalId": "wayfinder",
           "evidence": [
-            {
-              "line": 39,
-              "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
-              "text": "Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets."
-            },
             {
               "line": 39,
               "path": "skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
@@ -1246,7 +1231,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/setup-matt-pocock-skills",
-      "upstreamHash": "46daa10ca70d3a194a56d16900abac8ad304fd3f8d6f25789bb603a781df16d4",
+      "upstreamHash": "6f5e1f3a1d3b269322d2b91dc1688fc3030a901b5e430b40cb2f500f5f6a28c8",
       "userInvoked": true
     },
     {
@@ -2066,8 +2051,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-    "committedAt": "2026-10-19T16:51:40+01:00",
+    "commit": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
+    "committedAt": "2026-10-27T07:44:12Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",
