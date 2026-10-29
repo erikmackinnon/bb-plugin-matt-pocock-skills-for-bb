@@ -608,7 +608,7 @@
         "implement-spec"
       ],
       "sourcePath": "skills/engineering/code-review",
-      "upstreamHash": "267da28fbc74dccfc3cb133bd8d0b8e1fcd4dfbe8cf89dc718cd1544332bc9e7",
+      "upstreamHash": "97ff85cf1e6bca727fa8999c170a6c76695050becf0fb830e6a67279bba404a8",
       "userInvoked": false
     },
     {
@@ -639,7 +639,7 @@
         "tdd"
       ],
       "sourcePath": "skills/engineering/codebase-design",
-      "upstreamHash": "31e2ba1fb558b7ff1d1da860849314ce8453b71617376250680dc8d62b536ae8",
+      "upstreamHash": "32f190a7fe53a791bf2880cdd2fd26717252107c9ee4b3b312e2d1d5e30ddb2f",
       "userInvoked": false
     },
     {
@@ -841,9 +841,9 @@
           "canonicalId": "code-review",
           "evidence": [
             {
-              "line": 36,
+              "line": 38,
               "path": "skills/engineering/implement-spec/SKILL.md",
-              "text": "7. Once all tickets are complete, call the Skill tool with `code-review` on the integration branch. Fix all issues raised by the code review in a single **implementer subagent**."
+              "text": "7. Once all tickets are complete, call the Skill tool with `code-review` on the integration branch. Fix all issues raised by the code review in a single fresh **implementer subagent**."
             }
           ],
           "kind": "hard"
@@ -863,7 +863,7 @@
           "canonicalId": "tdd",
           "evidence": [
             {
-              "line": 29,
+              "line": 31,
               "path": "skills/engineering/implement-spec/SKILL.md",
               "text": "   - calls the Skill tool with `tdd` to build the ticket;"
             }
@@ -908,7 +908,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/implement-spec",
-      "upstreamHash": "8bcea86866cb4e265dd21cc8a877ae91218ee07ad8717f6f404d676dd3b139be",
+      "upstreamHash": "b31a8eb1538172b8a285eee64b27549aaf0e612e8fc6ecd25e362bd96cd25542",
       "userInvoked": true
     },
     {
@@ -984,7 +984,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/improve-codebase-architecture",
-      "upstreamHash": "f8c8bd125bd20656f10c1f104af2d148eb33daa6967bc56a3892a13da7f92acb",
+      "upstreamHash": "a34f2fd93add03825cebff245309365fed0b88825999f3046d989d63b49ea945",
       "userInvoked": true
     },
     {
@@ -1063,7 +1063,7 @@
         "wayfinder"
       ],
       "sourcePath": "skills/engineering/research",
-      "upstreamHash": "ac6c55c66eda9f79b6ff6ddb02e92675c8fca9cb2e84ae5c81bbe9cb3094ab29",
+      "upstreamHash": "94ad80edc343695a838d4cfd3eb6bc65536d3e537b24a02cb8ba7a866edb193f",
       "userInvoked": false
     },
     {
@@ -1537,7 +1537,7 @@
             {
               "line": 115,
               "path": "skills/engineering/wayfinder/SKILL.md",
-              "text": "5. **Fire the research subagents.** For each `research` ticket you just created, spin up a subagent that calls the Skill tool with \"research\" to resolve it in parallel, capturing its findings on a throwaway `research/<name>` branch with a context pointer from the ticket. Push the branch but open no PR: it is never merged."
+              "text": "5. **Fire the research subagents.** For each `research` ticket you just created, spin up a subagent with a fresh context window that calls the Skill tool with \"research\" to resolve it in parallel, capturing its findings on a throwaway `research/<name>` branch with a context pointer from the ticket. Push the branch but open no PR: it is never merged."
             }
           ],
           "kind": "conditional-hard"
@@ -1597,7 +1597,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/wayfinder",
-      "upstreamHash": "dabf54cbbb50a160e736cacd7271a7e2744081d32b3dff56826a85f180644ebf",
+      "upstreamHash": "685794a02eefc5b67d7e79449bf907d7e9f0b820e0258f61ba9bf5d1cc6f12ae",
       "userInvoked": true
     },
     {
@@ -1666,7 +1666,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/in-progress/chief-of-staff",
-      "upstreamHash": "0cd71552685058e540e4fc3806b3af717ffe4da8f1684fb01ee9a67c7596660a",
+      "upstreamHash": "3196a2114c75818ebc413ec25c646792f1df5f0fa9ed0c14a265044a13aa8835",
       "userInvoked": true
     },
     {
@@ -1914,7 +1914,7 @@
         "wayfinder"
       ],
       "sourcePath": "skills/productivity/grilling",
-      "upstreamHash": "04567f3c0a347298852bd1f895592294b445bbdfe64d705aeb9fde4dc4ea2baf",
+      "upstreamHash": "85cfc04678b242bfa6c47288b222dce93453a8fe5325fe302815dc71609c74d4",
       "userInvoked": false
     },
     {
@@ -2051,11 +2051,11 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "59db609eb1e18aaf59b63284d0e52255aff0c63c",
-    "committedAt": "2026-10-27T07:44:12Z",
+    "commit": "a496f5513d4a4cf889bc48e189e579f4b0bdf6aa",
+    "committedAt": "2026-10-29T10:42:51Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",
-    "version": "1.3.1"
+    "version": "1.3.2"
   }
 }
