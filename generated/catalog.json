@@ -1666,7 +1666,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/in-progress/chief-of-staff",
-      "upstreamHash": "3196a2114c75818ebc413ec25c646792f1df5f0fa9ed0c14a265044a13aa8835",
+      "upstreamHash": "92a14fd3e375ba7d49d273c4250480b090282d4aa65be9547aa049625d1b97b7",
       "userInvoked": true
     },
     {
@@ -1755,6 +1755,27 @@
       "requiredBy": [],
       "sourcePath": "skills/in-progress/setup-ts-deep-modules",
       "upstreamHash": "ebe03ff1d342db5fdf03729d711abfcda8bfd409aa756e5540f63a24007cf022",
+      "userInvoked": true
+    },
+    {
+      "aliasName": "matt-pocock-software-factory",
+      "bucket": "in-progress",
+      "canonicalId": "software-factory",
+      "compatRules": {
+        "alias": [
+          "alias-name-software-factory"
+        ],
+        "canonical": []
+      },
+      "defaultEnabled": false,
+      "dependsOn": [],
+      "description": "Shared language for designing a software factory: the tasks it runs and the services it plugs into.",
+      "displayName": "software-factory",
+      "hasScripts": false,
+      "prereqs": [],
+      "requiredBy": [],
+      "sourcePath": "skills/in-progress/software-factory",
+      "upstreamHash": "3e1411925548d6abab4b8c8ba39d062b0b9b3b4846410cff1f3d031c3de0a138",
       "userInvoked": true
     },
     {
@@ -2051,8 +2072,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "a496f5513d4a4cf889bc48e189e579f4b0bdf6aa",
-    "committedAt": "2026-10-29T10:42:51Z",
+    "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
+    "committedAt": "2026-11-19T13:34:58Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",

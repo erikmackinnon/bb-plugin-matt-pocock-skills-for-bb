@@ -26,11 +26,11 @@ bb plugin update matt-pocock-skills-for-bb
 
 Open **Matt Pocock skills for bb** in the sidebar. Under **Scope**, choose **Default for all projects** to set defaults, or select a project to follow those defaults or pick its own skills. The master switch turns the whole set off at the selected scope. Changes apply to new threads.
 
-The bundle has 33 skills:
+The bundle has 34 skills:
 
 - **Engineering (20, on by default):** `ask-matt`, `code-review`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `improve-codebase-architecture`, `pr`, `prototype`, `research`, `retro`, `setup-matt-pocock-skills`, `tdd`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `wizard`.
 - **Productivity (7, on by default):** `grill-me`, `grilling`, `handoff`, `teach`, `to-questionnaire`, `wait-what`, `writing-for-agents`.
-- **In-progress (6, off until you opt in):** `chief-of-staff`, `loop-me`, `setup-ts-deep-modules`, `writing-beats`, `writing-fragments`, `writing-shape`. Matt marks these experimental, so the page asks before turning them on.
+- **In-progress (7, off until you opt in):** `chief-of-staff`, `loop-me`, `setup-ts-deep-modules`, `software-factory`, `writing-beats`, `writing-fragments`, `writing-shape`. Matt marks these experimental, so the page asks before turning them on.
 
 To get started, run `/setup-matt-pocock-skills` once per repository to record your issue tracker, triage labels and domain-doc locations. Then use `/grill-with-docs` before a code change, `/grill-me` for a plan or decision, and `/ask-matt` when you're not sure which skill fits.
 
