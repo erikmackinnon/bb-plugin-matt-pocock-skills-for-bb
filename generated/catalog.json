@@ -1654,7 +1654,7 @@
       },
       "defaultEnabled": false,
       "dependsOn": [],
-      "description": "Pursue a long-running goal in a single session by co-ordinating subagents.",
+      "description": "Delegate the work to fresh subagents and remember what it taught you in a dated wiki, so the next session picks up the thread.",
       "displayName": "chief-of-staff",
       "hasScripts": false,
       "prereqs": [
@@ -1666,7 +1666,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/in-progress/chief-of-staff",
-      "upstreamHash": "92a14fd3e375ba7d49d273c4250480b090282d4aa65be9547aa049625d1b97b7",
+      "upstreamHash": "cc356b186fb9e213e3d5cda2f4bf7be84cbbfbb292cb91860f6a958a36201ec7",
       "userInvoked": true
     },
     {
@@ -2072,8 +2072,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
-    "committedAt": "2026-11-19T13:34:58Z",
+    "commit": "d65391149dbb5fe76478e76fa8d5122b2aa5a70e",
+    "committedAt": "2026-11-24T14:43:03Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",

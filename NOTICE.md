@@ -2,7 +2,7 @@
 
 Plugin code is copyright 2026 Erik MacKinnon under the root [MIT license](LICENSE).
 
-The selected skills are copyright 2026 Matt Pocock and distributed under his [MIT license](matt-pocock/LICENSE), preserved verbatim. The source is [mattpocock/skills](https://github.com/mattpocock/skills) at commit `abeeaf95660ba9e8b7c753eb38f441ca707a8823`, manifest version 1.3.2. Engineering and productivity are included; in-progress is included except claude-handoff. Canonical skill files remain unchanged. Alias copies change only the frontmatter name.
+The selected skills are copyright 2026 Matt Pocock and distributed under his [MIT license](matt-pocock/LICENSE), preserved verbatim. The source is [mattpocock/skills](https://github.com/mattpocock/skills) at commit `d65391149dbb5fe76478e76fa8d5122b2aa5a70e`, manifest version 1.3.2. Engineering and productivity are included; in-progress is included except claude-handoff. Canonical skill files remain unchanged. Alias copies change only the frontmatter name.
 
 Matt's `pr` skill credits Dex Horthy's `show-me` material from HumanLayer. Its complete attribution remains at [the canonical copy](matt-pocock/skills/engineering/pr/CREDITS.md) and [the alias copy](matt-pocock/skills/engineering/matt-pocock-pr/CREDITS.md).
 
