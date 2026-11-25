@@ -702,7 +702,7 @@
         "wayfinder"
       ],
       "sourcePath": "skills/engineering/domain-modeling",
-      "upstreamHash": "d05c97149942ac08e61248613b6c6bfb5a58f3a0cb9bf475d340adc61b6172f4",
+      "upstreamHash": "bff15e6fc04d7e6d04e8c41424cda603e003a8f71254e381334434f1562f8f5d",
       "userInvoked": false
     },
     {
@@ -2072,8 +2072,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "d65391149dbb5fe76478e76fa8d5122b2aa5a70e",
-    "committedAt": "2026-11-24T14:43:03Z",
+    "commit": "6f7f7831a625f040a8e06a0e7954826b87ce775a",
+    "committedAt": "2026-11-25T12:08:23Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",
