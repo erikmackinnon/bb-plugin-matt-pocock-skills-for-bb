@@ -1382,7 +1382,7 @@
       ],
       "requiredBy": [],
       "sourcePath": "skills/engineering/to-tickets",
-      "upstreamHash": "6f3861ed90d08151d984a5836d1fe63f0cc3c08b72ea6600e9c697f8ff9909fb",
+      "upstreamHash": "a505017c32c89cccbe340e1c934acbd2e8718e35c20019e6537dabf09969626c",
       "userInvoked": true
     },
     {
@@ -2072,8 +2072,8 @@
   ],
   "upstream": {
     "author": "Matt Pocock",
-    "commit": "6f7f7831a625f040a8e06a0e7954826b87ce775a",
-    "committedAt": "2026-11-25T12:08:23Z",
+    "commit": "bbadaa631c37af594e5a05c9cefacd9956136b18",
+    "committedAt": "2026-11-27T17:07:41Z",
     "license": "MIT",
     "ref": "main",
     "repo": "mattpocock/skills",
